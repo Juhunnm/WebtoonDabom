@@ -4,7 +4,7 @@ import { View, Text } from 'react-native';
 const CommunityPage = () => {
     return (
         <View>
-            <Text>커뮤니티 페이지</Text>
+            <Text>커뮤니티 페이지 test</Text>
         </View>
     );
 };

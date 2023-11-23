@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { View, Text, StyleSheet, Dimensions, Platform, TouchableOpacity, ScrollView } from 'react-native';
@@ -11,26 +11,35 @@ import {
 } from 'react-native-paper';
 
 const Tab = createMaterialTopTabNavigator();
-
 const WINDOW_HEIGHT = Dimensions.get('window').height;
+
+
+// 플랫폼 선택 영역 사이즈
 const PLATFORM_SIZE = WINDOW_HEIGHT * 0.13;
 
 
 const HomePage = () => {
-    const [isNaverChecked, setIsNaverChecked] = useState(true);
-    const [isKakaoChecked, setIsKakaoChecked] = useState(true);
-    const [isPageChecked, setIsPageChecked] = useState(true);
+    // 플랫폼 선택 state
+    const [isNaverChecked, setNaverChecked] = useState(true);
+    const [isKakaoChecked, setKakaoChecked] = useState(true);
+    const [isPageChecked, setPageChecked] = useState(true);
+    const [isLejinChecked, setLejinChecked] = useState(true);
 
+    // react native paper 테마
     const theme = {
         ...DefaultTheme,
         myOwnProperty: true,
         colors: {
             ...DefaultTheme.colors,
-            primary: '#585858', // 이거 바꾸면 됨
+            primary: '#585858',
         },
     };
 
-    const webtoonData = [...Array(21)].map((_, index) => ({
+    // 임시 요일 배열(실제 데이터에서는 필요없음)
+    const daysOfWeek = ["월", "화", "수", "목", "금", "토", "일", "완결"];
+
+    // 임시 웹툰 데이터
+    const webtoonData = [...Array(10)].map((_, index) => ({
         _id: `temp_id_${index}`, // 임시 ID
         webtoonId: 1000000000 + index, // 임의의 웹툰 ID
         title: `웹툰 ${index + 1}`, // 제목
@@ -38,7 +47,7 @@ const HomePage = () => {
         url: `https://m.comic.naver.com/webtoon/list?titleId=318995`, // 임시 URL
         img: `https://picsum.photos/id/${index}/200/200`, // 이미지 URL
         service: index % 3 === 0 ? "naver" : (index % 3 === 1 ? "kakao" : "kakaoPage"), // 서비스 (naver, kakao, kakaoPage 중 하나)
-        updateDays: `월`, // 업데이트 요일
+        updateDays: daysOfWeek[index % daysOfWeek.length], 
         fanCount: Math.floor(Math.random() * 500), // 팬 수 (임의로 생성)
         searchKeyword: `keyword_${index}`, // 검색 키워드
         additional: {
@@ -50,11 +59,49 @@ const HomePage = () => {
         }
     }));
 
+    // 요일별 웹툰 데이터 나누기
+    const filterDataForDay = (day) => {
+        return webtoonData.filter(item => item.updateDays === day);
+    };
+
+    const [mondayData, setMondayData] = useState([]);
+    const [tuesdayData, setTuesdayData] = useState([]);
+    const [wednesdayData, setWednesdayData] = useState([]);
+    const [thursdayData, setThursdayData] = useState([]);
+    const [fridayData, setFridayData] = useState([]);
+    const [saturdayData, setSaturdayData] = useState([]);
+    const [sundayData, setsundayData] = useState([]);
+    const [finishedData, setFinishedData] = useState([]);
+
+    useEffect(() => {
+        setMondayData(filterDataForDay("월"));
+        setTuesdayData(filterDataForDay("화"));
+        setWednesdayData(filterDataForDay("수"));
+        setThursdayData(filterDataForDay("목"));
+        setFridayData(filterDataForDay("금"));
+        setSaturdayData(filterDataForDay("토"));
+        setsundayData(filterDataForDay("일"));
+        setFinishedData(filterDataForDay("완결"));
+    }, []);
+
+    useEffect(() => {
+        if (mondayData.length > 0 && 
+            tuesdayData.length > 0 && 
+            wednesdayData.length > 0 && 
+            thursdayData.length > 0 && 
+            fridayData.length > 0 && 
+            saturdayData.length > 0 && 
+            sundayData.length > 0 &&
+            finishedData.length> 0) {
+            console.log("모든 요일 데이터 로딩 완료");
+        }
+    }, [mondayData, tuesdayData, wednesdayData, thursdayData, fridayData, saturdayData, sundayData, finishedData]);
+
     return (
         <View style={styles.container}>
             <View style={styles.platformList}>
                 <TouchableOpacity
-                    onPress={() => setIsNaverChecked(!isNaverChecked)}>
+                    onPress={() => setNaverChecked(!isNaverChecked)}>
                     <Image
                         source={require('../../img/naverWebtoonIcon.svg')}
                         style={styles.platformImage}
@@ -64,7 +111,7 @@ const HomePage = () => {
                     )}
                 </TouchableOpacity>
                 <TouchableOpacity
-                    onPress={() => setIsKakaoChecked(!isKakaoChecked)}>
+                    onPress={() => setKakaoChecked(!isKakaoChecked)}>
                     <Image
                         source={require('../../img/kakaoWebtoonIcon.svg')}
                         style={styles.platformImage}
@@ -74,7 +121,7 @@ const HomePage = () => {
                     )}
                 </TouchableOpacity>
                 <TouchableOpacity
-                    onPress={() => setIsPageChecked(!isPageChecked)}>
+                    onPress={() => setPageChecked(!isPageChecked)}>
                     <Image
                         source={require('../../img/kakaoPageIcon.png')}
                         style={styles.platformImage}
@@ -83,8 +130,18 @@ const HomePage = () => {
                         <View style={styles.unselectedOverlay} />
                     )}
                 </TouchableOpacity>
+                <TouchableOpacity
+                    onPress={() => setLejinChecked(!isLejinChecked)}>
+                    <Image
+                        source={require('../../img/lejinIcon.svg')}
+                        style={styles.platformImage}
+                    />
+                    {!isLejinChecked && (
+                        <View style={styles.unselectedOverlay} />
+                    )}
+                </TouchableOpacity>
             </View>
-            <View style={{ height: WINDOW_HEIGHT * 0.05 }} >
+            <View style={{ backgroundColor: '#fff', height: WINDOW_HEIGHT * 0.05, paddingHorizontal: 5 }} >
                 <ScrollView
                     horizontal={true}
                     style={{ backgroundColor: '#fff' }}
@@ -119,14 +176,14 @@ const HomePage = () => {
                     tabBarItemStyle: { flex: 1 }, // 탭 아이템 너비를 자동 조절
                 }}
             >
-                <Tab.Screen name="월" children={() => <WebtoonList day="월" webtoonData={webtoonData} />} />
-                <Tab.Screen name="화" children={() => <WebtoonList day="화" webtoonData={webtoonData}/>} />
-                <Tab.Screen name="수" children={() => <WebtoonList day="수" webtoonData={webtoonData}/>} />
-                <Tab.Screen name="목" children={() => <WebtoonList day="목" webtoonData={webtoonData}/>} />
-                <Tab.Screen name="금" children={() => <WebtoonList day="금" webtoonData={webtoonData}/>} />
-                <Tab.Screen name="토" children={() => <WebtoonList day="토" webtoonData={webtoonData}/>} />
-                <Tab.Screen name="일" children={() => <WebtoonList day="일" webtoonData={webtoonData}/>} />
-                <Tab.Screen name="완결" children={() => <WebtoonList day="완결" webtoonData={webtoonData}/>} />
+                <Tab.Screen name="월" children={() => <WebtoonList day="월" initialData={mondayData} />} />
+                <Tab.Screen name="화" children={() => <WebtoonList day="화" initialData={tuesdayData}/>} />
+                <Tab.Screen name="수" children={() => <WebtoonList day="수" initialData={wednesdayData}/>} />
+                <Tab.Screen name="목" children={() => <WebtoonList day="목" initialData={thursdayData}/>} />
+                <Tab.Screen name="금" children={() => <WebtoonList day="금" initialData={fridayData}/>} />
+                <Tab.Screen name="토" children={() => <WebtoonList day="토" initialData={saturdayData}/>} />
+                <Tab.Screen name="일" children={() => <WebtoonList day="일" initialData={sundayData}/>} />
+                <Tab.Screen name="완결" children={() => <WebtoonList day="완결" initialData={finishedData}/>} />
             </Tab.Navigator>
         </View>
 
@@ -147,7 +204,7 @@ const styles = StyleSheet.create({
     platformImage: {
         height: PLATFORM_SIZE * 0.8,
         width: PLATFORM_SIZE * 0.8,
-        borderRadius: WINDOW_HEIGHT * 0.015,
+        borderRadius: PLATFORM_SIZE * 0.1,
     },
     unselectedOverlay: {
         position: 'absolute',
@@ -156,7 +213,7 @@ const styles = StyleSheet.create({
         height: PLATFORM_SIZE * 0.8,
         width: PLATFORM_SIZE * 0.8,
         backgroundColor: 'rgba(0, 0, 0, 0.5)',
-        borderRadius: WINDOW_HEIGHT * 0.015,
+        borderRadius: PLATFORM_SIZE * 0.1,
     },
     categoryList: {
         flexDirection: 'row',

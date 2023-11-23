@@ -1,36 +1,50 @@
-import React from 'react';
-import { View, Text, ScrollView, Dimensions, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, FlatList, ScrollView, Dimensions, StyleSheet, TouchableOpacity } from 'react-native';
+import { Image } from 'expo-image';
+
 
 const WINDOW_HEIGHT = Dimensions.get('window').height;
 
-const BORDER_COLOR = '#F8F8F8';
-const ITEM_SIZE = WINDOW_HEIGHT * 0.15;
-const ITEM_BORDER_RADIUS = ITEM_SIZE * 0.08;
+const ITEM_SIZE = WINDOW_HEIGHT * 0.17;
 const FONT_SIZE_TITLE = WINDOW_HEIGHT * 0.025;
 const FONT_SIZE_TEXT = WINDOW_HEIGHT * 0.019;
 
-const WebtoonList = ({ day, webtoonData }) => {
-    return (
-        <ScrollView>
-            {webtoonData && webtoonData.map((webtoon, index) => (
-                <TouchableOpacity key={webtoon._id} style={styles.item}>
-                    <Image
-                        source={{ uri: webtoon.img }}
-                        style={styles.itemImage}
-                    />
-                    <View style={styles.textContainer}>
-                        <Text style={styles.itemName}>{webtoon.title}</Text>
-                        <Text style={styles.itemText}>{webtoon.author}</Text>
-                        <TouchableOpacity style={styles.itemUser}
-                            onPress={() => {
-                                console.log(webtoon.service+"클릭");
-                            }}>
-                            <Text>{webtoon.service}</Text>
-                        </TouchableOpacity>
-                    </View>
+const WebtoonList = ({ day, initialData }) => {
+    const [data, setData] = useState([]);
+
+    useEffect(() => {
+        if (initialData) {
+            setData(initialData);
+        }
+    }, [initialData]);
+
+    const renderItem = ({ item }) => (
+        <TouchableOpacity key={item._id} style={styles.item}>
+            <Image
+                source={{ 
+                    uri: "https://kr-a.kakaopagecdn.com/P/C/3093/c1/2x/b973723c-39bb-4d69-b614-1b07ba82e2f6.png"
+                }}
+                style={styles.itemImage}
+            />
+            <View style={styles.textContainer}>
+                <Text style={styles.itemName}>{item.title}</Text>
+                <Text style={styles.itemText}>{item.author}</Text>
+                <TouchableOpacity style={styles.itemUser}
+                    onPress={() => {
+                        console.log(item.service + " 클릭");
+                    }}>
+                    <Text>{item.service}</Text>
                 </TouchableOpacity>
-            ))}
-        </ScrollView>
+            </View>
+        </TouchableOpacity>
+    );
+
+    return (
+        <FlatList
+            data={data}
+            renderItem={renderItem}
+            keyExtractor={item => item._id}
+        />
     );
 };
 
@@ -43,16 +57,17 @@ const styles = StyleSheet.create({
         width: '100%',
         height: ITEM_SIZE,
         flexDirection: "row",
-        borderBottomWidth: 1,
-        borderColor: BORDER_COLOR,
+        borderTopWidth: 1,
+        borderColor: '#F8F8F8',
         backgroundColor: '#FFFFFF',
         alignItems: 'flex-start',
         padding: 10,
     },
     itemImage: {
-        width: ITEM_SIZE * 0.8,
-        height: ITEM_SIZE * 0.8,
-        borderRadius: ITEM_BORDER_RADIUS,
+        width: ITEM_SIZE * 0.7,
+        height: ITEM_SIZE * 0.9,
+        borderRadius: ITEM_SIZE * 0.03,
+        backgroundColor: '#F2F2F2'
     },
     itemName: {
         width: '100%',

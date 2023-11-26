@@ -1,31 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, ScrollView, Dimensions, StyleSheet, TouchableOpacity } from 'react-native';
-import { Image } from 'expo-image';
-
+import { View, Text, FlatList, ScrollView, Image, Dimensions, StyleSheet, TouchableOpacity } from 'react-native';
+// import { Image } from 'expo-image';
+import WebViewImage from './WebViewImage';
 
 const WINDOW_HEIGHT = Dimensions.get('window').height;
 
 const ITEM_SIZE = WINDOW_HEIGHT * 0.17;
-const FONT_SIZE_TITLE = WINDOW_HEIGHT * 0.025;
-const FONT_SIZE_TEXT = WINDOW_HEIGHT * 0.019;
 
-const WebtoonList = ({ day, initialData }) => {
-    const [data, setData] = useState([]);
-
-    useEffect(() => {
-        if (initialData) {
-            setData(initialData);
-        }
-    }, [initialData]);
-
+const WebtoonList = ({ initialData }) => {
     const renderItem = ({ item }) => (
         <TouchableOpacity key={item._id} style={styles.item}>
-            <Image
-                source={{ 
-                    uri: "https://kr-a.kakaopagecdn.com/P/C/3093/c1/2x/b973723c-39bb-4d69-b614-1b07ba82e2f6.png"
-                }}
-                style={styles.itemImage}
-            />
+            <WebViewImage imageURL={item.img}/>
             <View style={styles.textContainer}>
                 <Text style={styles.itemName}>{item.title}</Text>
                 <Text style={styles.itemText}>{item.author}</Text>
@@ -41,7 +26,7 @@ const WebtoonList = ({ day, initialData }) => {
 
     return (
         <FlatList
-            data={data}
+            data={initialData}
             renderItem={renderItem}
             keyExtractor={item => item._id}
         />
@@ -60,7 +45,7 @@ const styles = StyleSheet.create({
         borderTopWidth: 1,
         borderColor: '#F8F8F8',
         backgroundColor: '#FFFFFF',
-        alignItems: 'flex-start',
+        alignItems: 'center',
         padding: 10,
     },
     itemImage: {
@@ -71,13 +56,13 @@ const styles = StyleSheet.create({
     },
     itemName: {
         width: '100%',
-        fontSize: FONT_SIZE_TITLE,
+        fontSize: ITEM_SIZE * 0.15,
         fontWeight: 'bold',
         textAlign: 'left'
     },
     itemText: {
         width: '100%',
-        fontSize: FONT_SIZE_TEXT,
+        fontSize: ITEM_SIZE * 0.11,
         textAlign: 'left',
     },
     itemUser: {

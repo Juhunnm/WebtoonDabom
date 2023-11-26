@@ -3,8 +3,11 @@ import { View, Text, Button, TextInput, TouchableOpacity } from 'react-native';
 import {signInWithEmailAndPassword} from 'firebase/auth';
 import { auth } from '../../../firebaseConfig';
 import {styles} from './Styling';
+import { useNavigation } from '@react-navigation/native';
 
 export default function LogIn({ setScreen }) {
+    const navigation = useNavigation();
+
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState(null);
@@ -53,7 +56,7 @@ export default function LogIn({ setScreen }) {
             style={styles.input}
           />
   
-          <TouchableOpacity onPress={() => setScreen('reset-password')}>
+          <TouchableOpacity onPress={() => navigation.navigate('ResetPassword')}>
             <Text style={[styles.link, { color: '#333' }]}>비밀번호를 잊어버렸는데요?</Text>
           </TouchableOpacity>
   

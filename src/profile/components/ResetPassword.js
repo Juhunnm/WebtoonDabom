@@ -3,7 +3,9 @@ import { View, Text, Button, TextInput, TouchableOpacity } from 'react-native';
 import { sendPasswordResetEmail } from 'firebase/auth';
 import { auth } from './../../../firebaseConfig';
 import {styles} from './Styling';
+import { useNavigation } from '@react-navigation/native';
 export default function ResetPassword({ setScreen }) {
+    const navigation = useNavigation();
     const [email, setEmail] = useState('');
     const [error, setError] = useState(null);
     const [submitted, setSubmitted] = useState(false);
@@ -29,7 +31,7 @@ export default function ResetPassword({ setScreen }) {
   
           {error && <Text style={styles.error}>{error}</Text>}
   
-          <TouchableOpacity onPress={() => setScreen('login')}>
+          <TouchableOpacity onPress={() => navigation.navigate('Home', { screen: '프로필',})}>
             <Text style={styles.link}>로그인하러 가기</Text>
           </TouchableOpacity>
   

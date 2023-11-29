@@ -10,13 +10,15 @@ const ThemePro = { // 임시 색상
     text: '#ffff',
 };
 
-const CommunityList = ({ data }) => {
+const CommunityList = ({ title, subTitle }) => {
     return (
         <View style={styles.communityListContainer}>
-            <Text style={{ color: 'white' }}>{data}</Text>
-            <View style={styles.listSeparator} />
+            <Text style={{ color: 'white' }}>{title}</Text>
+            <View style={styles.listSeparator} >
+                <Text style={{ color: 'white' }}>{subTitle}</Text>
+            </View>
             <View style={styles.buttonContainer}>
-                <MaterialCommunityIcons name="account-eye-outline" size={24} color="white"/>
+                <MaterialCommunityIcons name="account-eye-outline" size={24} color="white" />
                 <MaterialCommunityIcons name="chat-outline" size={24} color="white" />
                 <MaterialCommunityIcons name="cards-heart-outline" size={24} color="white" />
             </View>

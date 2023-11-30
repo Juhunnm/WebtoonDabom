@@ -8,6 +8,8 @@ import BottomTabNavigation from './BottomTabNavigation';
 import ResetPassword from '../profile/components/ResetPassword';
 import Signup from '../profile/components/SignUp';
 
+//커뮤니티 관련 컴포넌트
+import AddCommunity from '../community/AddCommunity'
 const Stack = createStackNavigator();
 
 const StackNavigation = () => {
@@ -45,6 +47,19 @@ const StackNavigation = () => {
                             <MaterialCommunityIcons name="bell" size={24} color="black" style={styles.icons} />
                         </View>
                     )
+                }} />
+            </Stack.Group>
+            {/* 커뮤니티 페이지 그룹 */}
+            <Stack.Group>
+                <Stack.Screen name="AddCommunity" component={AddCommunity} options={{
+                    title: '글 작성',
+                    headerTintColor: 'black',
+                    headerBackTitleVisible: false, // 뒤로가기 버튼 옆의 텍스트를 표시하지 않음
+                    headerStyle: {
+                        borderBottomWidth: 0, // 헤더바의 하단 border를 없앰
+                        elevation: 0, // 안드로이드에서의 shadow 없앰
+                        shadowOpacity: 0, // iOS에서의 shadow 없앰
+                    },
                 }} />
             </Stack.Group>
         </Stack.Navigator>

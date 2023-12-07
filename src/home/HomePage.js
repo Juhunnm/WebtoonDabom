@@ -1,25 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-
 import {
     View,
-    Text,
     StyleSheet,
     Dimensions,
-    TouchableOpacity,
-    ScrollView
 } from 'react-native';
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useNavigation } from '@react-navigation/native';
+
+
 
 import WebtoonList from './components/WebtoonList';
-
-import { Button } from 'react-native-paper';
-
-import { Image } from 'expo-image';
-import {
-    MD3LightTheme as DefaultTheme,
-    PaperProvider,
-} from 'react-native-paper';
 
 import PlatformButton from './components/PlatformButton';
 
@@ -32,21 +23,12 @@ const PLATFORM_SIZE = WINDOW_HEIGHT * 0.13;
 
 
 const HomePage = () => {
+    const navigation = useNavigation();
     // 플랫폼 선택 state
     const [isNaverChecked, setNaverChecked] = useState(true);
-    const [isKakaoChecked, setKakaoChecked] = useState(true);
-    const [isPageChecked, setPageChecked] = useState(true);
-    const [isLejinChecked, setLejinChecked] = useState(true);
-
-    // react native paper 테마
-    const theme = {
-        ...DefaultTheme,
-        myOwnProperty: true,
-        colors: {
-            ...DefaultTheme.colors,
-            primary: '#585858',
-        },
-    };
+    const [isKakaoChecked, setKakaoChecked] = useState(false);
+    const [isPageChecked, setPageChecked] = useState(false);
+    const [isLejinChecked, setLejinChecked] = useState(false);
 
     // 웹툰 정보 API 요청
     const fetchWebtoonData = async (apiUrl) => {
@@ -57,7 +39,7 @@ const HomePage = () => {
                 console.log("AsyncStorage에서 데이터를 불러왔습니다.");
                 return JSON.parse(storedData);
             }
-            
+
             const startTime = new Date().getTime();  // 요청 시작 시간 측정
 
             const response = await fetch(apiUrl);
@@ -68,8 +50,8 @@ const HomePage = () => {
             const data = await response.json();  // JSON 응답을 파싱
 
             const endTime = new Date().getTime();  // 요청 종료 시간 측정
-            const duration = (endTime - startTime) / 1000;  // 요청에 걸린 시간 계산 (초 단위)
-
+            const duration = (endTime - startTime) / 1000;  // 요청에 걸린 시간 계산
+            
             console.log(`API 요청에 걸린 시간: ${duration}초`);
 
             await AsyncStorage.setItem('webtoons', JSON.stringify(data));
@@ -114,51 +96,31 @@ const HomePage = () => {
                     onPress={() => setLejinChecked(!isLejinChecked)}
                     image={require('../../img/lejinIcon.svg')}
                 />
-
             </View>
-            <View style={{ backgroundColor: '#fff', height: WINDOW_HEIGHT * 0.05, paddingHorizontal: 5 }} >
-                <ScrollView
-                    horizontal={true}
-                    style={{ backgroundColor: '#fff' }}
-                    showsHorizontalScrollIndicator={false}>
-                    <View style={styles.categoryList}>
-                        <Button mode="contained" theme={theme}>
-                            #액션
-                        </Button>
-                        <Button mode="contained" theme={theme}>
-                            #로맨스
-                        </Button>
-                        <Button mode="contained" theme={theme}>
-                            #판타지
-                        </Button>
-                        <Button mode="contained" theme={theme}>
-                            #일상
-                        </Button><Button mode="contained" theme={theme}>
-                            #무협
-                        </Button>
-                        <Button mode="contained" theme={theme}>
-                            #드라마 원작
-                        </Button>
-                        <Button mode="contained" theme={theme}>
-                            #스포츠
-                        </Button>
-                    </View>
-                </ScrollView>
-            </View>
+            
             <Tab.Navigator
                 screenOptions={{
                     scrollEnabled: false, // 탭 스크롤 활성화
                     tabBarItemStyle: { flex: 1 }, // 탭 아이템 너비를 자동 조절
+                    lazy: true,
                 }}
             >
-                <Tab.Screen name="월" children={() => <WebtoonList updateDay={"mon"} />} />
-                <Tab.Screen name="화" children={() => <WebtoonList updateDay={"tue"} />} />
-                <Tab.Screen name="수" children={() => <WebtoonList updateDay={"wed"} />} />
-                <Tab.Screen name="목" children={() => <WebtoonList updateDay={"thu"} />} />
-                <Tab.Screen name="금" children={() => <WebtoonList updateDay={"fri"} />} />
-                <Tab.Screen name="토" children={() => <WebtoonList updateDay={"sat"} />} />
-                <Tab.Screen name="일" children={() => <WebtoonList updateDay={"sun"} />} />
-                <Tab.Screen name="완결" children={() => <WebtoonList updateDay={"finished"} />} />
+                <Tab.Screen name="월" children={() => <WebtoonList updateDay={"mon"}
+                    isNaverChecked={isNaverChecked} isKakaoChecked={isKakaoChecked} isPageChecked={isPageChecked} />} />
+                <Tab.Screen name="화" children={() => <WebtoonList updateDay={"tue"}
+                    isNaverChecked={isNaverChecked} isKakaoChecked={isKakaoChecked} isPageChecked={isPageChecked} />} />
+                <Tab.Screen name="수" children={() => <WebtoonList updateDay={"wed"}
+                    isNaverChecked={isNaverChecked} isKakaoChecked={isKakaoChecked} isPageChecked={isPageChecked} />} />
+                <Tab.Screen name="목" children={() => <WebtoonList updateDay={"thu"}
+                    isNaverChecked={isNaverChecked} isKakaoChecked={isKakaoChecked} isPageChecked={isPageChecked} />} />
+                <Tab.Screen name="금" children={() => <WebtoonList updateDay={"fri"}
+                    isNaverChecked={isNaverChecked} isKakaoChecked={isKakaoChecked} isPageChecked={isPageChecked} />} />
+                <Tab.Screen name="토" children={() => <WebtoonList updateDay={"sat"}
+                    isNaverChecked={isNaverChecked} isKakaoChecked={isKakaoChecked} isPageChecked={isPageChecked} />} />
+                <Tab.Screen name="일" children={() => <WebtoonList updateDay={"sun"}
+                    isNaverChecked={isNaverChecked} isKakaoChecked={isKakaoChecked} isPageChecked={isPageChecked} />} />
+                <Tab.Screen name="완결" children={() => <WebtoonList updateDay={"finished"}
+                    isNaverChecked={isNaverChecked} isKakaoChecked={isKakaoChecked} isPageChecked={isPageChecked} />} />
             </Tab.Navigator>
         </View>
 

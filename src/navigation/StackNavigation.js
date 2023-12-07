@@ -15,7 +15,7 @@ import ResetPassword from '../profile/components/ResetPassword';
 import Signup from '../profile/components/SignUp';
 
 //커뮤니티 관련 컴포넌트
-import AddCommunity from '../community/AddCommunity'
+import AddCommunityPage from '../community/AddCommunityPage'
 const Stack = createStackNavigator();
 
 const StackNavigation = () => {
@@ -86,7 +86,7 @@ const StackNavigation = () => {
             </Stack.Group>
             {/* 커뮤니티 페이지 그룹 */}
             <Stack.Group>
-                <Stack.Screen name="AddCommunity" component={AddCommunity} options={{
+                <Stack.Screen name="AddCommunityPage" component={AddCommunityPage} options={{
                     title: '글 작성',
                     headerTintColor: 'black',
                     headerBackTitleVisible: false, // 뒤로가기 버튼 옆의 텍스트를 표시하지 않음

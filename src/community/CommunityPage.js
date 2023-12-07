@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
-import CommunityList from './CommunutyList';
+import CommunityList from './components/CommunutyList';
 import { useNavigation } from '@react-navigation/native';
 
 const ThemePro = {  // 임시 색상 
@@ -12,10 +12,32 @@ const ThemePro = {  // 임시 색상
     text: '#ffff',
 };
 
+const apiUrl = 'https://korea-webtoon-api.herokuapp.com';
+
+async function fetchData() {
+  try {
+    const response = await fetch(apiUrl);
+
+    if (!response.ok) {
+      throw new Error(`Network response was not ok: ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    console.log(data.webtoons);
+  } catch (error) {
+    console.error('There was a problem with the fetch operation:', error);
+  }
+}
+
+// fetchData 함수 호출
+fetchData();
+
+
 const CommunityPage = () => {
     const navigation = useNavigation();
-
-    const [listData, setListData] = useState([ //임시 리스트 데이터
+//임시 리스트 데이터
+    const [listData, setListData] = useState([ 
         { title: '제목 1', subTitle: '후기 작성했습니다.' },
 
     ]);
@@ -23,7 +45,7 @@ const CommunityPage = () => {
     const [searchList, setSearchList] = useState('');
 
     const handleAddList = () => {
-        navigation.navigate('AddCommunity', { setListData });
+        navigation.navigate('AddCommunityPage', { setListData });
     };
 
     const filteredList = listData.filter(

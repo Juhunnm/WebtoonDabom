@@ -1,4 +1,4 @@
-import React, { useState, useEffect, memo } from 'react';
+import React, { useState, useEffect, useCallback, memo } from 'react';
 import {
     View,
     Text,
@@ -97,7 +97,7 @@ const WebtoonList = ({ updateDay, isNaverChecked, isKakaoChecked, isPageChecked 
         };
     }, [navigation, updateDay, isNaverChecked, isKakaoChecked, isPageChecked]);
 
-    const renderItem = ({ item }) => (
+    const renderItem = useCallback(({ item }) =>
         <WebtoonListItem
             item={item}
             onPress={() => {
@@ -112,8 +112,10 @@ const WebtoonList = ({ updateDay, isNaverChecked, isKakaoChecked, isPageChecked 
                     additional: item.additional,
                 });
             }}
-        />
+        />, []
     );
+
+    const keyExtractor = useCallback((item) => item._id, []);
 
     const renderEmptyComponent = () => (
         <View style={styles.emptyContainer}>
@@ -129,9 +131,11 @@ const WebtoonList = ({ updateDay, isNaverChecked, isKakaoChecked, isPageChecked 
             contentContainerStyle={{ flexGrow: 1 }}
             data={webtoons}
             renderItem={renderItem}
-            keyExtractor={item => item._id}
-            initialNumToRender={10}
-            maxToRenderPerBatch={10}
+            keyExtractor={keyExtractor}
+            initialNumToRender={4}
+            maxToRenderPerBatch={4}
+            windowSize={2}
+            removeClippedSubviews={true}
             ListEmptyComponent={renderEmptyComponent}
         />
     );

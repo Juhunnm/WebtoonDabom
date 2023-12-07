@@ -1,4 +1,4 @@
-import React, { useState, useEffect, memo } from 'react';
+import React, { useState, useEffect, useCallback, memo } from 'react';
 import {
     View,
     Text,
@@ -102,7 +102,7 @@ const SearchPage = ({ navigation: { navigate }, route }) => {
         }
     }, [searchQuery, webtoons]);
 
-    const renderItem = ({ item }) => (
+    const renderItem = useCallback(({ item }) =>
         <WebtoonListItem
             item={item}
             onPress={() => {
@@ -117,8 +117,10 @@ const SearchPage = ({ navigation: { navigate }, route }) => {
                     additional: item.additional,
                 });
             }}
-        />
+        />, []
     );
+
+    const keyExtractor = useCallback((item) => item._id, []);
 
     const renderEmptyComponent = () => (
         <View style={styles.emptyContainer}>
@@ -135,9 +137,11 @@ const SearchPage = ({ navigation: { navigate }, route }) => {
             contentContainerStyle={{ flexGrow: 1 }}
             data={filteredWebtoons}
             renderItem={renderItem}
-            keyExtractor={item => item._id}
-            initialNumToRender={10}
-            maxToRenderPerBatch={10}
+            keyExtractor={keyExtractor}
+            initialNumToRender={6}
+            maxToRenderPerBatch={4}
+            windowSize={2}
+            removeClippedSubviews={true}
             ListEmptyComponent={renderEmptyComponent}
         />
     );

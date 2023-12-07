@@ -96,37 +96,8 @@ const HomePage = () => {
                     onPress={() => setLejinChecked(!isLejinChecked)}
                     image={require('../../img/lejinIcon.svg')}
                 />
-
             </View>
-            {/* <View style={{ backgroundColor: '#fff', height: WINDOW_HEIGHT * 0.05, paddingHorizontal: 5 }} >
-                <ScrollView
-                    horizontal={true}
-                    style={{ backgroundColor: '#fff' }}
-                    showsHorizontalScrollIndicator={false}>
-                    <View style={styles.categoryList}>
-                        <Button mode="contained" theme={theme}>
-                            #액션
-                        </Button>
-                        <Button mode="contained" theme={theme}>
-                            #로맨스
-                        </Button>
-                        <Button mode="contained" theme={theme}>
-                            #판타지
-                        </Button>
-                        <Button mode="contained" theme={theme}>
-                            #일상
-                        </Button><Button mode="contained" theme={theme}>
-                            #무협
-                        </Button>
-                        <Button mode="contained" theme={theme}>
-                            #드라마 원작
-                        </Button>
-                        <Button mode="contained" theme={theme}>
-                            #스포츠
-                        </Button>
-                    </View>
-                </ScrollView>
-            </View> */}
+            
             <Tab.Navigator
                 screenOptions={{
                     scrollEnabled: false, // 탭 스크롤 활성화

@@ -17,7 +17,7 @@ const CommunityList = ({ title, subTitle }) => {
             <View style={styles.buttonContainer}>
                 <TouchableOpacity
                     onPress={() => {
-                        navigation.navigate('DetailedPage');
+                        navigation.navigate('DetailedCommunityPage');
                     }}
                 >
                     <MaterialCommunityIcons name="chat-outline" size={24} color={"white"} />

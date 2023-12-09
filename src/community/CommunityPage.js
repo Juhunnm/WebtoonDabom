@@ -6,35 +6,7 @@ import { useNavigation } from '@react-navigation/native';
 import { collection, getDocs } from 'firebase/firestore';
 import { fireStoreDB } from '../../firebaseConfig';
 
-// 테마 색상 정의
-const ThemePro = {
-    background: '#363062',
-    element_1: '#435585',
-    element_2: '#818FB4',
-    button: '#F5E8C7',
-    text: '#ffff',
-};
-
 const apiUrl = 'https://korea-webtoon-api.herokuapp.com';
-
-async function fetchData() {
-  try {
-    const response = await fetch(apiUrl);
-
-    if (!response.ok) {
-      throw new Error(`Network response was not ok: ${response.status}`);
-    }
-
-    const data = await response.json();
-
-    console.log(data.webtoons);
-  } catch (error) {
-    console.error('There was a problem with the fetch operation:', error);
-  }
-}
-
-// fetchData 함수 호출
-fetchData();
 
 
 const CommunityPage = () => {

@@ -15,6 +15,28 @@ const ThemePro = {
     text: '#ffff',
 };
 
+const apiUrl = 'https://korea-webtoon-api.herokuapp.com';
+
+async function fetchData() {
+  try {
+    const response = await fetch(apiUrl);
+
+    if (!response.ok) {
+      throw new Error(`Network response was not ok: ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    console.log(data.webtoons);
+  } catch (error) {
+    console.error('There was a problem with the fetch operation:', error);
+  }
+}
+
+// fetchData 함수 호출
+fetchData();
+
+
 const CommunityPage = () => {
     const navigation = useNavigation();
     const [listData, setListData] = useState([]); // 글 목록 데이터 상태

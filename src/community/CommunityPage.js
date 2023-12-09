@@ -1,10 +1,13 @@
-import React, { useState } from 'react';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import React, { useState, useEffect } from 'react';
+import { MaterialCommunityIcons,FontAwesome } from '@expo/vector-icons';
 import { View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
 import CommunityList from './components/CommunutyList';
 import { useNavigation } from '@react-navigation/native';
+import { collection, getDocs } from 'firebase/firestore';
+import { fireStoreDB } from '../../firebaseConfig';
 
-const ThemePro = {  // 임시 색상 
+// 테마 색상 정의
+const ThemePro = {
     background: '#363062',
     element_1: '#435585',
     element_2: '#818FB4',
@@ -36,26 +39,41 @@ fetchData();
 
 const CommunityPage = () => {
     const navigation = useNavigation();
-//임시 리스트 데이터
-    const [listData, setListData] = useState([ 
-        { title: '제목 1', subTitle: '후기 작성했습니다.' },
+    const [listData, setListData] = useState([]); // 글 목록 데이터 상태
+    const [searchList, setSearchList] = useState(''); // 검색어 상태
 
-    ]);
-
-    const [searchList, setSearchList] = useState('');
-
-    const handleAddList = () => {
-        navigation.navigate('AddCommunityPage', { setListData });
+    // 파이어베이스에서 데이터를 불러오는 함수
+    const fetchListData = async () => {
+        try {
+            // 'posts' 컬렉션에서 데이터 가져오기
+            const querySnapshot = await getDocs(collection(fireStoreDB, 'posts'));
+            
+            // 가져온 데이터를 배열로 변환하여 상태 업데이트
+            const data = querySnapshot.docs.map((doc) => doc.data());
+            setListData(data);
+        } catch (error) {
+            console.error('Error : ', error);
+        }
     };
 
+    // 컴포넌트가 마운트될 때 데이터 불러오기
+    useEffect(() => {
+        fetchListData();
+    });
+
+    // 글 작성 페이지로 이동하는 함수
+    const handleAddList = () => {
+        navigation.navigate('AddCommunityPage');
+    };
+
+    // 검색어에 맞는 글 목록 필터링
     const filteredList = listData.filter(
         (data) => data.title.toLowerCase().includes(searchList.toLowerCase())
     );
 
-    //상세보기 페이지 추가(댓글 기능을 위해서 스택)
-    //로그인했을 떄는 볼 수만 있도록
     return (
         <View style={styles.container}>
+            {/* 검색 바 */}
             <View style={styles.searchBar}>
                 <TextInput
                     style={styles.input}
@@ -64,14 +82,10 @@ const CommunityPage = () => {
                     value={searchList}
                     onChangeText={(text) => setSearchList(text)}
                 />
-                {/* 웹툰 이름만 검색한 결과만 나오도록 렌더링 하도록 */}
-                <MaterialCommunityIcons name="book-search-outline" size={24} color="black" />
+                <FontAwesome name="search" size={24} color="black" />
             </View>
 
-            <TouchableOpacity style={styles.createButton} onPress={handleAddList}>
-                <Text>글 작성</Text>
-            </TouchableOpacity>
-
+            {/* 글 목록 출력 */}
             <ScrollView>
                 {filteredList.map((data, idx) => (
                     <View key={idx}>
@@ -79,23 +93,29 @@ const CommunityPage = () => {
                     </View>
                 ))}
             </ScrollView>
+            
+
+            {/* 글 작성 버튼 */}
+            <TouchableOpacity style={styles.createButton} onPress={handleAddList}>
+                <Text>글 작성</Text>
+            </TouchableOpacity>
         </View>
     );
 };
 
-//신의 탑의 웹툰을 보았으면 그것을 보았다는 것을 알려주고 별점을 넣을 수 있도록 할 수 있도록 (사진 대신 웹툰의 메인 페이지, 별점 기능 추가하면 좋을꺼같다.)
+// 스타일 정의
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: ThemePro.background,
+        backgroundColor: 'white',
         flex: 1,
+        position: 'relative',
     },
     searchBar: {
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: 'gray',
-        height: 40,
-        marginBottom: 10,
-        marginTop: 10,
+        backgroundColor: '#bdbebd',
+        height: 50,
+        margin : 10,
         borderRadius: 10,
         paddingLeft: 10,
         paddingRight: 10,
@@ -105,13 +125,17 @@ const styles = StyleSheet.create({
         color: '#fff',
     },
     createButton: {
-        backgroundColor: ThemePro.button,
+        backgroundColor: '#d3d3d3',
         width: 80,
         height: 60,
         borderRadius: 10,
+        borderWidth: 2, 
+        borderColor: 'black', 
         alignItems: 'center',
         justifyContent: 'center',
-        alignSelf: 'flex-end',
+        position: 'absolute', 
+        top: 80,
+        right: 10, 
     },
 });
 

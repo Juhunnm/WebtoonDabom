@@ -45,7 +45,7 @@ const StackNavigation = () => {
                     title: '',
                     headerTintColor: 'black',
                     headerBackTitleVisible: false, // 뒤로가기 버튼 옆의 텍스트를 표시하지 않음
-                     headerShown: false,
+                    headerShown: false,
                 }} />
             </Stack.Group>
             {/* 로그인 페이지 그룹 */}

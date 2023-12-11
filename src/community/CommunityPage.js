@@ -1,80 +1,94 @@
-import React from 'react';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import React, { useState, useEffect } from 'react';
+import { MaterialCommunityIcons,FontAwesome } from '@expo/vector-icons';
 import { View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
-import styled from 'styled-components';
+import CommunityList from './components/CommunutyList';
+import { useNavigation } from '@react-navigation/native';
+import { collection, getDocs } from 'firebase/firestore';
+import { fireStoreDB } from '../../firebaseConfig';
 
-const MyButton = styled.TouchableOpacity`
-  margin: 10px;
-`;
+const apiUrl = 'https://korea-webtoon-api.herokuapp.com';
 
-const CompassionButton = ({ iconName, color }) => (
-    <MyButton>
-        <MaterialCommunityIcons name={iconName} size={24} color={color} />
-    </MyButton>
-);
-
-const CommunityList = ({ data }) => (
-    <View style={styles.communityListContainer}>
-        <Text>{data}</Text>
-        <View style={styles.listSeparator} />
-        <View style={styles.buttonContainer}>
-            <CompassionButton iconName="account-eye-outline" color="black" />
-            <CompassionButton iconName="chat-outline" color="black" />
-            <CompassionButton iconName="cards-heart-outline" color="black" />
-        </View>
-    </View>
-);
 
 const CommunityPage = () => {
-    const ary = [
-        "김지원",
-        "이승우",
-        "박지민",
-        "최수빈",
-        "정태영",
-        "강은주",
-        "윤성민",
-        "한지은",
-        "임민서",
-        "송승현",
-    ];
+    const navigation = useNavigation();
+    const [listData, setListData] = useState([]); // 글 목록 데이터 상태
+    const [searchList, setSearchList] = useState(''); // 검색어 상태
+
+    // 파이어베이스에서 데이터를 불러오는 함수
+    const fetchListData = async () => {
+        try {
+            // 'posts' 컬렉션에서 데이터 가져오기
+            const querySnapshot = await getDocs(collection(fireStoreDB, 'posts'));
+            
+            // 가져온 데이터를 배열로 변환하여 상태 업데이트
+            const data = querySnapshot.docs.map((doc) => doc.data());
+            setListData(data);
+        } catch (error) {
+            console.error('Error : ', error);
+        }
+    };
+
+    // 컴포넌트가 마운트될 때 데이터 불러오기
+    useEffect(() => {
+        fetchListData();
+    },[]);
+
+    // 글 작성 페이지로 이동하는 함수
+    const handleAddList = () => {
+        navigation.navigate('AddCommunityPage');
+    };
+
+    // 검색어에 맞는 글 목록 필터링
+    const filteredList = listData.filter(
+        (data) => data.title.toLowerCase().includes(searchList.toLowerCase())
+    );
 
     return (
         <View style={styles.container}>
+            {/* 검색 바 */}
             <View style={styles.searchBar}>
                 <TextInput
                     style={styles.input}
                     placeholder="커뮤니티 검색"
-                    placeholderTextColor="#ffe6"
+                    placeholderTextColor="#ffff"
+                    value={searchList}
+                    onChangeText={(text) => setSearchList(text)}
                 />
-                <MaterialCommunityIcons name="book-search-outline" size={24} color="black" />
+                <FontAwesome name="search" size={24} color="black" />
             </View>
 
-            <TouchableOpacity style={styles.createButton}>
-                <Text>글 작성</Text>
-            </TouchableOpacity>
-
+            {/* 글 목록 출력 */}
             <ScrollView>
-                {ary.map((data, idx) => (
+                {filteredList.map((data, idx) => (
                     <View key={idx}>
-                        <CommunityList data={data} />
+                        <CommunityList title={data.title} subTitle={data.subTitle} />
                     </View>
                 ))}
             </ScrollView>
+            
+
+            {/* 글 작성 버튼 */}
+            <TouchableOpacity style={styles.createButton} onPress={handleAddList}>
+                <Text>글 작성</Text>
+            </TouchableOpacity>
         </View>
     );
 };
 
+// 스타일 정의
 const styles = StyleSheet.create({
     container: {
-        margin: 10,
+        backgroundColor: 'white',
+        flex: 1,
+        position: 'relative',
     },
     searchBar: {
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: 'gray',
-        height: 40,
-        marginBottom: 10,
+        backgroundColor: '#bdbebd',
+        height: 50,
+        margin : 10,
+        borderRadius: 10,
         paddingLeft: 10,
         paddingRight: 10,
     },
@@ -83,26 +97,17 @@ const styles = StyleSheet.create({
         color: '#fff',
     },
     createButton: {
-        backgroundColor: '#DDDDDD',
+        backgroundColor: '#d3d3d3',
         width: 80,
         height: 60,
+        borderRadius: 10,
+        borderWidth: 2, 
+        borderColor: 'black', 
         alignItems: 'center',
         justifyContent: 'center',
-        alignSelf: 'flex-end',
-    },
-    communityListContainer: {
-        height: 300,
-        marginVertical: 10,
-        padding: 10,
-        backgroundColor: '#DDDDDD',
-    },
-    listSeparator: {
-        flex: 1,
-        backgroundColor: '#ffe9',
-        margin: 10,
-    },
-    buttonContainer: {
-        flexDirection: 'row',
+        position: 'absolute', 
+        top: 80,
+        right: 10, 
     },
 });
 

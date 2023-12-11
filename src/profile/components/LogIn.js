@@ -3,13 +3,10 @@ import { View, Text, TextInput, TouchableOpacity, Pressable } from 'react-native
 import {signInWithEmailAndPassword} from 'firebase/auth';
 import { auth } from '../../../firebaseConfig';
 import {styles} from './Styling';
+import { useNavigation } from '@react-navigation/native';
 
-<<<<<<< Updated upstream
-export default function LogIn({ setScreen }) {
-=======
 export default function LogIn() {
     const navigation = useNavigation();
->>>>>>> Stashed changes
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState(null);
@@ -55,11 +52,6 @@ export default function LogIn() {
             placeholderTextColor="#aaa"
             style={styles.input}
           />
-<<<<<<< Updated upstream
-  
-          <TouchableOpacity onPress={() => setScreen('reset-password')}>
-            <Text style={[styles.link, { color: '#333' }]}>비밀번호를 잊어버렸는데요?</Text>
-=======
          {error && <Text style={styles.error}>{error}</Text>}
 </View>
 
@@ -71,7 +63,6 @@ export default function LogIn() {
          <View style={styles.sameLine}>
           <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
             <Text style={styles.link}>계정을 만들기</Text>
->>>>>>> Stashed changes
           </TouchableOpacity>
           <TouchableOpacity  onPress={() => navigation.navigate('ResetPassword')}>
             <Text style={[styles.link, { color: '#333' }]}>비밀번호를 재설정</Text>

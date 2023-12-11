@@ -3,7 +3,9 @@ import { View, Text, Button, TextInput, TouchableOpacity, Pressable } from 'reac
 import { sendPasswordResetEmail } from 'firebase/auth';
 import { auth } from './../../../firebaseConfig';
 import {styles} from './Styling';
+import { useNavigation } from '@react-navigation/native';
 export default function ResetPassword({ setScreen }) {
+    const navigation = useNavigation();
     const [email, setEmail] = useState('');
     const [error, setError] = useState(null);
     const [submitted, setSubmitted] = useState(false);
@@ -27,13 +29,6 @@ export default function ResetPassword({ setScreen }) {
         <View style={styles.topScreen}>
           {error && <Text style={styles.error}>{error}</Text>}
   
-<<<<<<< Updated upstream
-          <TouchableOpacity onPress={() => setScreen('login')}>
-            <Text style={styles.link}>로그인하러 가기</Text>
-          </TouchableOpacity>
-  
-=======
->>>>>>> Stashed changes
           {submitted ? (
             <Text>Please check your email for a reset password link.</Text>
           ) : (

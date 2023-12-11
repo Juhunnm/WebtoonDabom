@@ -3,18 +3,22 @@ import {
     View,
     Text,
     FlatList,
+    TextInput,
     Dimensions,
     StyleSheet,
     TouchableOpacity
 } from 'react-native';
-import WebViewImage from './WebViewImage';
+import WebViewImage from './components/WebViewImage';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
 import { useNavigation } from '@react-navigation/native';
 import { Image } from "react-native-expo-image-cache";
 
 const WINDOW_HEIGHT = Dimensions.get('window').height;
+const WINDOW_WIDTH = Dimensions.get('window').width;
 
 const ITEM_SIZE = WINDOW_HEIGHT * 0.17;
+
 
 const WebtoonListItem = memo(({ item, onPress }) => {
     return (
@@ -51,57 +55,67 @@ const WebtoonListItem = memo(({ item, onPress }) => {
     );
 });
 
-const WebtoonList = ({ updateDay, isNaverChecked, isKakaoChecked, isPageChecked }) => {
+
+
+const SearchPage = ({ navigation: { navigate }, route }) => {
     const navigation = useNavigation();
     const [webtoons, setWebtoons] = useState([]);
+    const [filteredWebtoons, setFilteredWebtoons] = useState([]);
+    const [searchQuery, setSearchQuery] = useState('');
 
+    // 헤더에 TextInput넣기
+    useEffect(() => {
+        navigation.setOptions({
+            headerTitle: () => (
+                <TextInput
+                    placeholder="웹툰 검색"
+                    style={styles.searchInput}
+                    onChangeText={setSearchQuery}
+                    returnKeyType="search"
+                    placeholderTextColor={"#DADADA"}
+                />
+            ),
+        });
+    }, [navigation]);
 
-    const getWebtoonsByCondition = async (update) => {
-        try {
+    // SearchPage로드시 AsyncStorage에서 웹툰 데이터 불러오기
+    useEffect(() => {
+        const fetchWebtoons = async () => {
             const storedData = await AsyncStorage.getItem('webtoons');
             if (storedData !== null) {
-                const webtoons = JSON.parse(storedData).webtoons;
-
-                // 플랫폼 선택에 따라 웹툰 필터링
-                const filteredWebtoons = webtoons.filter(webtoon =>
-                    webtoon.updateDays.includes(update) &&
-                    ((webtoon.service === 'naver' && isNaverChecked) ||
-                        (webtoon.service === 'kakao' && isKakaoChecked) ||
-                        (webtoon.service === 'kakaoPage' && isPageChecked))
-                );
-
-                setWebtoons(filteredWebtoons); // 상태 업데이트
+                setWebtoons(JSON.parse(storedData).webtoons);
             }
-        } catch (error) {
-            console.error('Error retrieving data:', error);
-        }
-
-        return [];
-    };
-
-    useEffect(() => {
-        const focusUnsubscribe = navigation.addListener('focus', () => {
-            getWebtoonsByCondition(updateDay);
-        });
-
-        const blurUnsubscribe = navigation.addListener('blur', () => {
-            setWebtoons([]); // 탭이 비활성화될 때 데이터 초기화
-        });
-
-        // 초기 로드 시 데이터 가져오기
-        getWebtoonsByCondition(updateDay);
-
-        return () => {
-            focusUnsubscribe();
-            blurUnsubscribe();
         };
-    }, [navigation, updateDay, isNaverChecked, isKakaoChecked, isPageChecked]);
+
+        fetchWebtoons();
+    }, []);
+
+    // Text입력할때마다 값에 맞는 데이터 불러오기
+    useEffect(() => {
+        if (searchQuery) {
+            const filteredData = webtoons.filter(webtoon =>
+                webtoon.title.toLowerCase().includes(searchQuery.toLowerCase())
+            );
+            setFilteredWebtoons(filteredData);
+        } else {
+            setFilteredWebtoons([]);
+        }
+    }, [searchQuery, webtoons]);
 
     const renderItem = useCallback(({ item }) =>
         <WebtoonListItem
             item={item}
             onPress={() => {
-                navigation.navigate('WebtoonDetailPage', item);
+                navigation.navigate('WebtoonDetailPage', {
+                    title: item.title,
+                    author: item.author,
+                    url: item.url,
+                    img: item.img,
+                    service: item.service,
+                    updateDays: item.updateDays,
+                    fanCount: item.fanCount,
+                    additional: item.additional,
+                });
             }}
         />, []
     );
@@ -116,14 +130,15 @@ const WebtoonList = ({ updateDay, isNaverChecked, isKakaoChecked, isPageChecked 
         </View>
     );
 
+
     return (
         <FlatList
             style={{ backgroundColor: '#fff' }}
             contentContainerStyle={{ flexGrow: 1 }}
-            data={webtoons}
+            data={filteredWebtoons}
             renderItem={renderItem}
             keyExtractor={keyExtractor}
-            initialNumToRender={4}
+            initialNumToRender={6}
             maxToRenderPerBatch={4}
             windowSize={2}
             removeClippedSubviews={true}
@@ -133,10 +148,6 @@ const WebtoonList = ({ updateDay, isNaverChecked, isKakaoChecked, isPageChecked 
 };
 
 const styles = StyleSheet.create({
-    container: {
-        flexWrap: 'wrap',
-        justifyContent: 'space-evenly'
-    },
     item: {
         width: '100%',
         height: ITEM_SIZE,
@@ -180,6 +191,15 @@ const styles = StyleSheet.create({
         backgroundColor: '#E9E9E9',
         borderRadius: ITEM_SIZE * 0.03,
     },
+    searchInput: {
+        flex: 1,
+        width: WINDOW_WIDTH * 0.9,
+        height: 40,
+        fontSize: WINDOW_HEIGHT * 0.025,
+        backgroundColor: '#fff',
+        paddingHorizontal: 10,
+        // 추가 스타일
+    },
     emptyContainer: {
         flex: 1,
         justifyContent: 'center',
@@ -191,4 +211,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default WebtoonList;
+export default SearchPage;

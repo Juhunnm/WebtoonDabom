@@ -16,6 +16,7 @@ import Signup from '../profile/components/SignUp';
 
 //커뮤니티 관련 컴포넌트
 import AddCommunityPage from '../community/AddCommunityPage'
+import DetailedCommunityPage from '../community/DetailedCommunityPage';
 const Stack = createStackNavigator();
 
 const StackNavigation = () => {
@@ -71,6 +72,16 @@ const StackNavigation = () => {
             {/* 커뮤니티 페이지 그룹 */}
             <Stack.Group>
                 <Stack.Screen name="AddCommunityPage" component={AddCommunityPage} options={{
+                    title: '글 작성',
+                    headerTintColor: 'black',
+                    headerBackTitleVisible: false, // 뒤로가기 버튼 옆의 텍스트를 표시하지 않음
+                    headerStyle: {
+                        borderBottomWidth: 0, // 헤더바의 하단 border를 없앰
+                        elevation: 0, // 안드로이드에서의 shadow 없앰
+                        shadowOpacity: 0, // iOS에서의 shadow 없앰
+                    },
+                }} />
+                <Stack.Screen name="DetailedCommunityPage" component={DetailedCommunityPage} options={{
                     title: '글 작성',
                     headerTintColor: 'black',
                     headerBackTitleVisible: false, // 뒤로가기 버튼 옆의 텍스트를 표시하지 않음

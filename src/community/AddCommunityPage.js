@@ -1,71 +1,85 @@
 import React, { useState } from 'react';
-import { Text, View, TouchableOpacity, TextInput, StyleSheet } from 'react-native';
+import { Text, View, TouchableOpacity, TextInput, ScrollView, StyleSheet } from 'react-native';
+import { doc, collection, addDoc } from "firebase/firestore";
+import { fireStoreDB } from '../../firebaseConfig';
 
-const ThemePro = { // 임시 색상 
-    background: '#363062',
-    element_1: '#435585',
-    element_2: '#818FB4',
-    button: '#F5E8C7',
-    text: '#ffff',
-};
+const AddCommunity = () => {
+    const [newTitle, setNewTitle] = useState("");
+    const [newSubTitle, setNewSubTitle] = useState("");
 
-const AddCommunity = ({ route }) => {
-    const {setListData } = route.params;
-    const [newTitle, setNewTitle] = useState(""); // 본문 글
-    const [newSubTitle,setNewSubTitle] = useState("");// 내용 글
+    const addPost = async () => {
+        try {
+            const postsCollection = collection(fireStoreDB, 'posts');
+            await addDoc(postsCollection, {
+                title: newTitle,
+                subTitle: newSubTitle,
+            });
+            console.log('저장 완료');
+        } catch (error) {
+            console.error('Error : ', error);
+        }
+    };
 
     const handleSaveArray = () => {
-        setListData((prev) => [...prev, {title :newTitle ,subTitle : newSubTitle}]);
-        alert("글 작성이 되었습니다.");
+        addPost();
+        alert('글 작성이 되었습니다.');
     };
 
     return (
-        <View style={styles.main}>
-
+        <ScrollView contentContainerStyle={styles.main}>
             <View style={styles.TitleInput}>
                 <TextInput
                     placeholder="제목을 작성해주세요"
+                    placeholderTextColor = 'white'
                     value={newTitle}
                     onChangeText={(text) => setNewTitle(text)}
-                    style={{ color : 'white',flex: 1 }}
+                    style={{ flex: 1 }}
                 />
             </View>
-            <View style={[styles.TitleInput, { height: '50%' }]}>
+            <View style={[styles.TitleInput, styles.textInput]}>
                 <TextInput
                     placeholder="본문을 작성해주세요"
+                    placeholderTextColor = 'white'
                     value={newSubTitle}
                     onChangeText={(text) => setNewSubTitle(text)}
-                    style={{ color : 'white',flex: 1 }}
+                    multiline
+                    numberOfLines={10} 
+                    style={{ flex: 1 }}
                 />
             </View>
-            <TouchableOpacity onPress={handleSaveArray} style={styles.button}>
+            <TouchableOpacity
+                onPress={handleSaveArray}
+                style={styles.button}
+            >
                 <Text style={{ color: 'white' }}>글 저장</Text>
             </TouchableOpacity>
-
-        </View>
+        </ScrollView>
     );
 };
 
 const styles = StyleSheet.create({
     main: {
-        flex: 1,
+        flexGrow: 1,
         alignItems: 'center',
-        backgroundColor: ThemePro.background,
+        backgroundColor: 'white',
         padding: 20,
-
     },
     TitleInput: {
         flexDirection: 'row',
-        backgroundColor: ThemePro.element_1,
+        backgroundColor: '#6a6a6a',
         height: 40,
         marginTop: 10,
         borderRadius: 10,
         paddingLeft: 10,
         paddingRight: 10,
+        color : 'white'
+    },
+    textInput: {
+        height: '50%', 
     },
     button: {
-        backgroundColor: ThemePro.element_2,
-        marginTop : 10,
+        backgroundColor: 'black',
+        marginTop: 10,
         padding: 10,
         borderRadius: 10,
         flexDirection: 'row',

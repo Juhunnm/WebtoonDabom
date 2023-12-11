@@ -3,6 +3,7 @@ import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { keys } from "./key/ApiKey";
 
+import {getFirestore} from "firebase/firestore";
 const firebaseConfig = {
   apiKey: keys.firebaseKey,
   authDomain: "webtoon-dabom.firebaseapp.com",
@@ -16,5 +17,6 @@ const firebaseConfig = {
 // 파이어베이스 초기화
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
+export const fireStoreDB = getFirestore(app);
 
 export default app;

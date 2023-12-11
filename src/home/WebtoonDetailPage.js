@@ -133,7 +133,12 @@ const WebtoonDetailPage = ({ navigation: { navigate }, route }) => {
                     <Text style={styles.webtoonInfoText}># {updateDays}연재</Text>
                 </View>
                 <View style={styles.webtoonInfo}>
-                    <Text style={styles.webtoonInfoText}># 약 {fanCount}{service === 'naver' ? '만명 팬 보유' : '만 조회수'}</Text>
+                    <Text style={styles.webtoonInfoText}>
+                        # 약 {fanCount}{(()=>{
+                            if(service === 'naver') return '만명 팬 보유'
+                            else if(service === 'kakao') return '만 좋아요'
+                            else if(service === 'kakaoPage') return '만 조회수'
+                        })()}</Text>
                 </View>
                 <View style={styles.webtoonInfo}>
                     <Text style={styles.webtoonInfoText}># {service}</Text>

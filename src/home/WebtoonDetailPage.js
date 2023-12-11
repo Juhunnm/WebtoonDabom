@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     View,
     Text,
@@ -7,6 +7,7 @@ import {
     TouchableOpacity,
 } from 'react-native'
 import WebViewImage from './components/WebViewImage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { Image } from "react-native-expo-image-cache";
 
@@ -21,6 +22,7 @@ const TEXT_HEADER = WINDOW_HEIGHT * 0.025;
 
 const WebtoonDetailPage = ({ navigation: { navigate }, route }) => {
     const {
+        _id,
         title,
         author,
         url,
@@ -32,6 +34,65 @@ const WebtoonDetailPage = ({ navigation: { navigate }, route }) => {
     } = route.params;
 
     const [isBookMark, setIsBookMark] = useState(false);
+
+    const initializeBookmark = async () => {
+        try {
+            const bookmarks = await AsyncStorage.getItem('bookMark');
+            if (bookmarks) {
+                const bookmarkArray = JSON.parse(bookmarks);
+                if (bookmarkArray.some(webtoon => webtoon._id === _id)) {
+                    console.log("즐겨찾기 되어있는 웹툰: "+title);
+                    setIsBookMark(true);
+                }else{
+                    console.log("즐겨찾기 안됨: "+title);
+                }
+            } else{
+                console.log("즐겨찾기 되어있는 웹툰이 하나도 없음");
+            }
+        } catch (error) {
+            console.error('AsyncStorage error:', error);
+        }
+    };
+
+    // 현재 웹툰이 즐찾이 되어있는지 확인
+    useEffect(() => {
+        initializeBookmark();
+    }, []);
+
+
+    // 즐찾 추가하기 or 제거하기
+    const handleBookmark = async () => {
+        try {
+            const bookmarks = await AsyncStorage.getItem('bookMark');
+            let bookmarkArray = bookmarks ? JSON.parse(bookmarks) : [];
+
+            if (!isBookMark) {
+                bookmarkArray = [...bookmarkArray, route.params];
+                console.log("즐겨찾기 추가: "+title);
+            } else {
+                bookmarkArray = bookmarkArray.filter(webtoon => webtoon._id !== _id);
+                console.log("즐겨찾기 제거: "+title);
+            }
+            console.log('즐찾 버튼 클릭')
+            setIsBookMark(!isBookMark);
+
+            await AsyncStorage.setItem('bookMark', JSON.stringify(bookmarkArray));
+        } catch (error) {
+            console.error('AsyncStorage error:', error);
+        }
+    };
+
+    const test = async() => {
+        try {
+            const bookmarks = await AsyncStorage.getItem('bookMark');
+            let bookmarkArray = bookmarks ? JSON.parse(bookmarks) : [];
+
+            console.log(bookmarkArray);
+        } catch (error) {
+            console.error('AsyncStorage error:', error);
+        }
+    }
+
     return (
         <View style={styles.container}>
             <View style={styles.itemLayout}>
@@ -58,9 +119,9 @@ const WebtoonDetailPage = ({ navigation: { navigate }, route }) => {
                     </View>
                     <TouchableOpacity style={styles.bookMarkButton}
                         onPress={() => {
-                            setIsBookMark(!isBookMark);
+                            handleBookmark();
                         }}>
-                        {isBookMark ? <AntDesign name="staro" size={ITEM_SIZE * 0.12} color={'#000'} /> : <AntDesign name="star" size={ITEM_SIZE * 0.12} color={'#000'}/>}
+                        {isBookMark ? <AntDesign name="star" size={ITEM_SIZE * 0.12} color={'#000'}/>: <AntDesign name="staro" size={ITEM_SIZE * 0.12} color={'#000'} />}
                         <Text style={{ fontSize: ITEM_SIZE * 0.12, fontWeight: 'bold', color: '#000' }}>즐겨찾기</Text>
                     </TouchableOpacity>
                 </View>
@@ -86,9 +147,7 @@ const WebtoonDetailPage = ({ navigation: { navigate }, route }) => {
                         <Text style={styles.webtoonInfoText}># 휴재</Text></View>}
             </View>
             <TouchableOpacity style={styles.webtoonButton}
-                onPress={()=>{
-                    console.log(url);
-                }}>
+                onPress={test}>
                 <Text style={styles.webtoonButtonText}>웹툰 보러가기</Text>
             </TouchableOpacity>
             <Text style={{ fontSize: TEXT_HEADER, fontWeight: 'bold', marginTop: 15 }}>커뮤니티</Text>

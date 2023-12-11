@@ -31,7 +31,7 @@ const CommunityPage = () => {
     // 컴포넌트가 마운트될 때 데이터 불러오기
     useEffect(() => {
         fetchListData();
-    });
+    },[]);
 
     // 글 작성 페이지로 이동하는 함수
     const handleAddList = () => {

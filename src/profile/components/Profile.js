@@ -69,6 +69,8 @@ export default function Profile() {
             <Pressable style={styles.button} onPress={handleSignup}>
               <Text style={styles.buttonText}>계정을 만들기</Text>
             </Pressable>
+            <View style={styles.sameLine}> 
+            </View>
           </View>
         </View>
       );

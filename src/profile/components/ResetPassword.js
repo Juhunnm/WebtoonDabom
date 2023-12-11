@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, Button, TextInput, TouchableOpacity } from 'react-native';
+import { View, Text, Button, TextInput, TouchableOpacity, Pressable } from 'react-native';
 import { sendPasswordResetEmail } from 'firebase/auth';
 import { auth } from './../../../firebaseConfig';
 import {styles} from './Styling';
@@ -25,35 +25,43 @@ export default function ResetPassword({ setScreen }) {
     };
   
     return (
-      <View style={styles.outer}>
-        <View style={styles.inner}>
-          <Text style={styles.header}>비밀번호를 되찾으세요</Text>
-  
+      <View style={styles.mainScreen}>
+        <View style={styles.topScreen}>
           {error && <Text style={styles.error}>{error}</Text>}
-  
-          <TouchableOpacity onPress={() => navigation.navigate('Home', { screen: '프로필',})}>
-            <Text style={styles.link}>로그인하러 가기</Text>
-          </TouchableOpacity>
   
           {submitted ? (
             <Text>Please check your email for a reset password link.</Text>
           ) : (
             <>
+              <Text style={styles.label}>이메일</Text>
               <TextInput
                 value={email}
                 onChangeText={setEmail}
                 keyboardType="email-address"
-                placeholder="이메일을 입력하세요"
+                placeholder='이메일을 입력'
                 autoCapitalize="none"
                 placeholderTextColor="#aaa"
                 style={styles.input}
               />
-  
-              <Button title="비밀번호를 되찾기" onPress={resetUserPassword} disabled={!email} />
-            </>
-          )}
+ </>
+           )}
+              </View>
+              <View style={styles.bottomScreen}>
+              < Pressable style={styles.button} onPress={resetUserPassword}>
+              <Text style={styles.buttonText}>보내기</Text>
+              </Pressable>
+                <View style={styles.sameLine}>
+          <TouchableOpacity onPress={() => navigation.navigate('LogIn')}>
+            <Text style={styles.link}>로그인하기</Text>
+          </TouchableOpacity>
+          <TouchableOpacity  onPress={() => navigation.navigate('SignUp')}>
+            <Text style={[styles.link, { color: '#333' }]}>계정을 만들기</Text>
+          </TouchableOpacity>
+          </View>
         </View>
-      </View>
+          
+        </View>
+
     );
   }
   

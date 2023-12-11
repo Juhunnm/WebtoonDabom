@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { signOut } from '@firebase/auth';
-import { Text, View, Button } from 'react-native';
+import { Text, View, Button, Image,TouchableOpacity} from 'react-native';
 import { styles } from './Styling';
 import { auth } from './../../../firebaseConfig';
 
@@ -9,13 +9,16 @@ import { auth } from './../../../firebaseConfig';
 
 export function LoggedIn() {
     const [userEmail, setUserEmail] = useState('');
+    const [name, setName] = useState('');
 
     useEffect(() => {
         const getUserEmail = async () => {
             try {
                 const user = auth.currentUser;
+                const name = user.displayName;
                 if (user) {
                     setUserEmail(user.email);
+                    setName(name);
                 }
             } catch (e) {
                 console.error(e);
@@ -34,14 +37,35 @@ export function LoggedIn() {
     };
 
     return (
-        <View style={styles.outer}>
-            <View style={styles.inner}>
-                <Text style={styles.header}>웹툰다봄계정</Text>
-                <Text style={styles.email}>{userEmail}</Text>
-                <Button title="로그아웃하기" onPress={logout} />
+        <View style={styles.mainScreen}>
+          <View style={styles.topScreen}>
+            <View style={styles.mainBox}>
+              <View style={styles.imageBox}>
+              <Image
+        source={require('./../../../img/DefaultProfile.png')}
+        style={styles.image}
+      />
+              </View>
+    
+              <View style={styles.userInfoBox}>
+                <View style={styles.leftbox}>
+                  <Text style={styles.alignLeft}>이름</Text>
+                  <Text style={styles.alignLeft}>이메일</Text>
+                </View>
+                <View style={styles.rightbox}>
+                  <Text style={styles.alignRight}>{name}</Text>
+                  <Text style={styles.alignRight}>{userEmail}</Text>
+                </View>
+              </View>
             </View>
+          </View>
+          <View style={styles.bottomScreen}>
+            <TouchableOpacity onPress={logout}>
+              <Text style={styles.link}>로그아웃하기</Text>
+            </TouchableOpacity>
+          </View>
         </View>
-    );
+      );
 }
 
   export default function ProfileSettings(){

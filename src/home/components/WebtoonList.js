@@ -16,7 +16,18 @@ const WINDOW_HEIGHT = Dimensions.get('window').height;
 
 const ITEM_SIZE = WINDOW_HEIGHT * 0.17;
 
+const platFormMappings = {
+    'naver': '네이버 웹툰',
+    'kakao': '카카오 웹툰',
+    'kakaoPage': '카카오 페이지',
+};
+const convertPlatformToKorean = (platform) => {
+    return platFormMappings[platform] || platform;
+};
+
 const WebtoonListItem = memo(({ item, onPress }) => {
+    // 연재요일 매핑하기
+    const koreanPlatforms = convertPlatformToKorean(item.service);
     return (
         <TouchableOpacity style={styles.item} onPress={onPress}>
             {(() => {
@@ -37,14 +48,13 @@ const WebtoonListItem = memo(({ item, onPress }) => {
             })()}
 
             <View style={styles.textContainer}>
-                <Text style={styles.itemName}>{item.title}</Text>
-                <Text style={styles.itemText}>{item.author}</Text>
-                <TouchableOpacity style={styles.itemUser}
-                    onPress={() => {
-                        console.log(item.additional);
-                    }}>
-                    <Text>{item.service}</Text>
-                </TouchableOpacity>
+                <View style={{ gap: 15 }}>
+                    <Text style={styles.itemName}>{item.title}</Text>
+                    <Text style={styles.itemText}>{item.author}</Text>
+                </View>
+                
+                <Text style={styles.itemUser}>{koreanPlatforms}</Text>
+               
             </View>
         </TouchableOpacity>
     );
@@ -153,13 +163,13 @@ const styles = StyleSheet.create({
         backgroundColor: '#F2F2F2'
     },
     itemName: {
-        width: '100%',
+        width: '90%',
         fontSize: ITEM_SIZE * 0.15,
         fontWeight: 'bold',
         textAlign: 'left'
     },
     itemText: {
-        width: '100%',
+        width: '90%',
         fontSize: ITEM_SIZE * 0.11,
         textAlign: 'left',
     },
@@ -170,7 +180,7 @@ const styles = StyleSheet.create({
         flex: 1,
         height: '100%',
         flexDirection: "column",
-        justifyContent: "space-around",
+        justifyContent: "space-between",
         paddingHorizontal: 10,
     },
     pageImageStyles: {

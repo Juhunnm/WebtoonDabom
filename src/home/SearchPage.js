@@ -106,16 +106,7 @@ const SearchPage = ({ navigation: { navigate }, route }) => {
         <WebtoonListItem
             item={item}
             onPress={() => {
-                navigation.navigate('WebtoonDetailPage', {
-                    title: item.title,
-                    author: item.author,
-                    url: item.url,
-                    img: item.img,
-                    service: item.service,
-                    updateDays: item.updateDays,
-                    fanCount: item.fanCount,
-                    additional: item.additional,
-                });
+                navigation.navigate('WebtoonDetailPage', item);
             }}
         />, []
     );

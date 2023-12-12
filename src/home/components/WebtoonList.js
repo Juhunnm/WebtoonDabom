@@ -39,7 +39,6 @@ const WebtoonListItem = memo(({ item, onPress }) => {
             <View style={styles.textContainer}>
                 <Text style={styles.itemName}>{item.title}</Text>
                 <Text style={styles.itemText}>{item.author}</Text>
-                {item.additional.rest && <Text>휴재!</Text>}
                 <TouchableOpacity style={styles.itemUser}
                     onPress={() => {
                         console.log(item.additional);

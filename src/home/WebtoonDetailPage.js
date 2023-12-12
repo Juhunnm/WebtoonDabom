@@ -3,6 +3,7 @@ import {
     View,
     Text,
     Dimensions,
+    Linking,
     StyleSheet,
     TouchableOpacity,
 } from 'react-native'
@@ -15,12 +16,29 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 
 const WINDOW_HEIGHT = Dimensions.get("window").height;
 
+// 전체적인 요소 사이즈
 const ITEM_SIZE = WINDOW_HEIGHT * 0.17;
-
+// 헤더 텍스트 사이즈 (작품정보, 커뮤니티)
 const TEXT_HEADER = WINDOW_HEIGHT * 0.025;
+
+// 연재요일 한국어로 바꿔주는 맵
+const dayMappings = {
+    'mon': '월요일',
+    'tue': '화요일',
+    'wed': '수요일',
+    'thu': '목요일',
+    'fri': '금요일',
+    'sat': '토요일',
+    'sun': '일요일',
+    'finished': '완결',
+};
+const convertDaysToKorean = (days) => {
+    return days.map(day => dayMappings[day] || day);
+};
 
 
 const WebtoonDetailPage = ({ navigation: { navigate }, route }) => {
+    // 웹툰 데이터 구조 분해
     const {
         _id,
         title,
@@ -33,8 +51,13 @@ const WebtoonDetailPage = ({ navigation: { navigate }, route }) => {
         additional,
     } = route.params;
 
+    // 연재요일 매핑하기
+    const koreanUpdateDays = convertDaysToKorean(updateDays);
+
+    // 즐겨찾기 상태
     const [isBookMark, setIsBookMark] = useState(false);
 
+    // 페이지 들어왔을 때 즐겨찾기 되어있는 웹툰인지 확인하는 함수
     const initializeBookmark = async () => {
         try {
             const bookmarks = await AsyncStorage.getItem('bookMark');
@@ -82,20 +105,15 @@ const WebtoonDetailPage = ({ navigation: { navigate }, route }) => {
         }
     };
 
-    const test = async() => {
-        try {
-            const bookmarks = await AsyncStorage.getItem('bookMark');
-            let bookmarkArray = bookmarks ? JSON.parse(bookmarks) : [];
-
-            console.log(bookmarkArray);
-        } catch (error) {
-            console.error('AsyncStorage error:', error);
-        }
+    // 웹툰 보러가는 함수(웹으로 연결)
+    const handleGoWebtoon = () => {
+        Linking.openURL(url).catch((err) => console.error('An error occurred', err));
     }
 
     return (
         <View style={styles.container}>
             <View style={styles.itemLayout}>
+                {/* 플랫폼 별로 이미지 제공 방식이 다르기 때문에 조건문으로 처리 */}
                 {(() => {
                     if (service === 'kakaoPage') return (
                         <Image
@@ -118,9 +136,8 @@ const WebtoonDetailPage = ({ navigation: { navigate }, route }) => {
                         <Text style={styles.itemDetail}>{author}</Text>
                     </View>
                     <TouchableOpacity style={styles.bookMarkButton}
-                        onPress={() => {
-                            handleBookmark();
-                        }}>
+                        onPress={handleBookmark}>
+                        {/* 즐찾 여부에 따른 버튼 아이콘 변화 */}
                         {isBookMark ? <AntDesign name="star" size={ITEM_SIZE * 0.12} color={'#000'}/>: <AntDesign name="staro" size={ITEM_SIZE * 0.12} color={'#000'} />}
                         <Text style={{ fontSize: ITEM_SIZE * 0.12, fontWeight: 'bold', color: '#000' }}>즐겨찾기</Text>
                     </TouchableOpacity>
@@ -130,7 +147,7 @@ const WebtoonDetailPage = ({ navigation: { navigate }, route }) => {
             <Text style={{ fontSize: TEXT_HEADER, fontWeight: 'bold' }}>작품정보</Text>
             <View style={styles.webtoonInfoContainer}>
                 <View style={styles.webtoonInfo}>
-                    <Text style={styles.webtoonInfoText}># {updateDays}연재</Text>
+                    <Text style={styles.webtoonInfoText}># {koreanUpdateDays.join(', ')} 연재</Text>
                 </View>
                 <View style={styles.webtoonInfo}>
                     <Text style={styles.webtoonInfoText}>
@@ -147,12 +164,9 @@ const WebtoonDetailPage = ({ navigation: { navigate }, route }) => {
                     <View style={styles.webtoonInfo}>
                         <Text style={styles.webtoonInfoText}># 성인웹툰</Text>
                     </View>}
-                {additional.rest &&
-                    <View style={styles.webtoonInfo}>
-                        <Text style={styles.webtoonInfoText}># 휴재</Text></View>}
             </View>
             <TouchableOpacity style={styles.webtoonButton}
-                onPress={test}>
+                onPress={handleGoWebtoon}>
                 <Text style={styles.webtoonButtonText}>웹툰 보러가기</Text>
             </TouchableOpacity>
             <Text style={{ fontSize: TEXT_HEADER, fontWeight: 'bold', marginTop: 15 }}>커뮤니티</Text>

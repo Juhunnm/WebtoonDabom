@@ -1,28 +1,40 @@
 import React, { useState } from 'react';
-import { Text, View, TouchableOpacity, TextInput, ScrollView, StyleSheet } from 'react-native';
+import { Text, View, TouchableOpacity, TextInput, ScrollView, StyleSheet, Alert } from 'react-native';
 import { doc, collection, addDoc } from "firebase/firestore";
 import { fireStoreDB } from '../../firebaseConfig';
+import { useNavigation } from '@react-navigation/native';
 
 const AddCommunity = () => {
+    
+    const navigation = useNavigation();
     const [newTitle, setNewTitle] = useState("");
     const [newSubTitle, setNewSubTitle] = useState("");
-
+    //저장 DB
+    const addPostDB ={
+        title : newTitle,
+        subTitle : newSubTitle,
+    }
     const addPost = async () => {
         try {
             const postsCollection = collection(fireStoreDB, 'posts');
             await addDoc(postsCollection, {
-                title: newTitle,
-                subTitle: newSubTitle,
+                ...addPostDB
             });
             console.log('저장 완료');
+            navigation.goBack();
         } catch (error) {
             console.error('Error : ', error);
         }
     };
 
     const handleSaveArray = () => {
+        if(newTitle ==='' && newSubTitle ===''){
+            Alert.alert('내용이없습니다.','내용을 입력해주세요');
+        }else{
+            
         addPost();
         alert('글 작성이 되었습니다.');
+        }
     };
 
     return (

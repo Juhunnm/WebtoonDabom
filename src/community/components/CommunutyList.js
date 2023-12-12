@@ -1,17 +1,22 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 
-
 const CommunityList = ({ title, subTitle }) => {
     const navigation = useNavigation();
-    return (
-        <View
-            style={styles.communityListContainer}>
+    const [isIcons, setIsIcons] = useState(false);
+    const [count, setCount] = useState(0);
 
-            <Text style={{ fontSize: 20, fontWeight: 'bold' }}>{title}</Text>
-            <View style={styles.listSeparator}>
+    const handleIcon = () => {
+        setIsIcons(!isIcons);
+        setCount(prevCount => isIcons ? prevCount - 1 : prevCount + 1);
+    };
+
+    return (
+        <View style={styles.communityListContainer}>
+            <Text style={styles.title}>{title}</Text>
+            <View style={styles.subTitle}>
                 <Text>{subTitle}</Text>
             </View>
             <View style={styles.buttonContainer}>
@@ -21,9 +26,17 @@ const CommunityList = ({ title, subTitle }) => {
                     }}
                 >
                     <MaterialCommunityIcons name="chat-outline" size={24} color={"white"} />
-
                 </TouchableOpacity>
-                <MaterialCommunityIcons name="cards-heart-outline" size={24} color={"white"} />
+                <View style={styles.iconContainer}>
+                    <TouchableOpacity onPress={handleIcon}>
+                        {isIcons ? (
+                            <MaterialCommunityIcons name="cards-heart" size={24} color={"black"} />
+                        ) : (
+                            <MaterialCommunityIcons name="cards-heart-outline" size={24} color={"white"} />
+                        )}
+                    </TouchableOpacity>
+                    <Text style={styles.countText}>{count}</Text>
+                </View>
             </View>
         </View>
     );
@@ -31,14 +44,18 @@ const CommunityList = ({ title, subTitle }) => {
 
 const styles = StyleSheet.create({
     communityListContainer: {
-        marginTop: 10,
         padding: 10,
-        backgroundColor: '#6a6a6a',
+        backgroundColor: '#858585',
         borderRadius: 10,
-        margin: 10,
+        marginBottom : 10,
     },
-    listSeparator: {
-        backgroundColor: '#bdbebd',
+    title: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        color: 'white',
+    },
+    subTitle: {
+        backgroundColor:'#CACACA',
         marginVertical: 10,
         borderRadius: 10,
         padding: 10,
@@ -47,6 +64,14 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-around',
         marginHorizontal: 10,
+    },
+    iconContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    countText: {
+        color: 'white',
+        marginLeft: 5,
     },
 });
 

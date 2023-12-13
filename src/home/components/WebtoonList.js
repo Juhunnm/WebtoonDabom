@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, memo } from 'react';
+import React, { useState, useEffect, useContext, useCallback, memo } from 'react';
 import {
     View,
     Text,
@@ -7,10 +7,15 @@ import {
     StyleSheet,
     TouchableOpacity
 } from 'react-native';
+
 import WebViewImage from './WebViewImage';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
 import { useNavigation } from '@react-navigation/native';
+
 import { Image } from "react-native-expo-image-cache";
+
+import { LoadingContext } from '../../loading/LoadingContext';
 
 const WINDOW_HEIGHT = Dimensions.get('window').height;
 
@@ -64,6 +69,8 @@ const WebtoonList = ({ updateDay, isNaverChecked, isKakaoChecked, isPageChecked 
     const navigation = useNavigation();
     const [webtoons, setWebtoons] = useState([]);
 
+    // api요청 로딩 끝남 감지
+    const { loadingFinished } = useContext(LoadingContext);
 
     const getWebtoonsByCondition = async (update) => {
         try {
@@ -98,13 +105,15 @@ const WebtoonList = ({ updateDay, isNaverChecked, isKakaoChecked, isPageChecked 
         });
 
         // 초기 로드 시 데이터 가져오기
-        getWebtoonsByCondition(updateDay);
+        if (loadingFinished) {
+            getWebtoonsByCondition(updateDay);
+        }
 
         return () => {
             focusUnsubscribe();
             blurUnsubscribe();
         };
-    }, [navigation, updateDay, isNaverChecked, isKakaoChecked, isPageChecked]);
+    }, [loadingFinished, navigation, updateDay, isNaverChecked, isKakaoChecked, isPageChecked]);
 
     const renderItem = useCallback(({ item }) =>
         <WebtoonListItem

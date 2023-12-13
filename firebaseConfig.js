@@ -1,9 +1,11 @@
 //파이어베이스 설정
 import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
+import { getAuth, initializeAuth, getReactNativePersistence } from "firebase/auth";
+import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage';
+import { getFirestore } from "firebase/firestore";
 import { keys } from "./key/ApiKey";
 
-import {getFirestore} from "firebase/firestore";
+
 const firebaseConfig = {
   apiKey: keys.firebaseKey,
   authDomain: "webtoon-dabom.firebaseapp.com",
@@ -16,7 +18,9 @@ const firebaseConfig = {
 
 // 파이어베이스 초기화
 const app = initializeApp(firebaseConfig);
-export const auth = getAuth(app);
+export const auth = initializeAuth(app, {
+  persistence: getReactNativePersistence(ReactNativeAsyncStorage)
+});
 export const fireStoreDB = getFirestore(app);
 
 export default app;

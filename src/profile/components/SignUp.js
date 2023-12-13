@@ -76,7 +76,7 @@ export default function Signup() {
           <Text style={styles.buttonText}>다음</Text>
         </Pressable>
         <View style={styles.sameLine}>
-          <TouchableOpacity onPress={() => navigation.navigate('LogIn')}>
+          <TouchableOpacity onPress={() =>  navigation.navigate('Home' , {screen: '프로필'})}>
             <Text style={styles.link}>로그인하기</Text>
           </TouchableOpacity>
           <TouchableOpacity  onPress={() => navigation.navigate('ResetPassword')}>

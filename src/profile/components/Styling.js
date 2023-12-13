@@ -18,10 +18,13 @@ export const styles = StyleSheet.create({
       flex: 3,
       justifyContent: 'flex-start',
       
+      
     },
     bottomScreen: {
       flex: 1,
       justifyContent: 'flex-end',
+      alignContent: 'center',
+      alignItems: 'center',
       
     },
     header: {
@@ -90,7 +93,7 @@ export const styles = StyleSheet.create({
       borderColor: '#ccc',
       borderWidth: 1,
       borderRadius: 10,
-      width: WINDOW_WIDTH * 0.95,
+      width: WINDOW_WIDTH * 0.98,
       marginBottom: 10,
   },
   imageBox: {

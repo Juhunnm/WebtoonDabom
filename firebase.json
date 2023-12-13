@@ -1,0 +1,12 @@
+{
+    "rules": {
+      ".read": "auth != null",
+      ".write": "auth != null",
+      "profileImages": {
+        "$filename": {
+          ".read": "auth != null",
+          ".write": "auth != null"
+        }
+      }
+    }
+  }

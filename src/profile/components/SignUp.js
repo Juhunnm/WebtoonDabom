@@ -5,6 +5,9 @@ import { auth } from './../../../firebaseConfig';
 import { styles } from './Styling';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useContext } from 'react';
+import { LoadingContext } from './../../loading/LoadingContext';
+import LoadingSpinner from './../../loading/LoadingSpinner';  
 
 export default function Signup() {
   const navigation = useNavigation();
@@ -12,9 +15,12 @@ export default function Signup() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState(null);
+  const { loading } = useContext(LoadingContext);
+  const { spinner } = useContext(LoadingContext);
 
   const createAccount = async () => {
     try {
+        spinner.start();
       if (password === confirmPassword) {
         await createUserWithEmailAndPassword(auth, email, password);
         AsyncStorage.setItem('email', email);
@@ -26,6 +32,9 @@ export default function Signup() {
     } catch (e) {
       setError('다른 이메일을 사용해주세요');
     }
+    finally {
+      spinner.stop();
+    }
   };
 
   // Use AsyncStorage here to fix the problem
@@ -33,7 +42,7 @@ export default function Signup() {
 
   return (
     <View style={styles.mainScreen}>
-
+      {loading && <LoadingSpinner />}
       <View style={styles.topScreen}>
 
 
@@ -79,6 +88,7 @@ export default function Signup() {
           <TouchableOpacity onPress={() =>  navigation.navigate('Home' , {screen: '프로필'})}>
             <Text style={styles.link}>로그인하기</Text>
           </TouchableOpacity>
+          <View style={styles.verticalLine}></View>
           <TouchableOpacity  onPress={() => navigation.navigate('ResetPassword')}>
             <Text style={[styles.link, { color: '#333' }]}>비밀번호를 재설정</Text>
           </TouchableOpacity>

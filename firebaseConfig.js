@@ -1,11 +1,11 @@
 //파이어베이스 설정
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
-import { getStorage } from "firebase/storage";
+import { keys } from "./key/ApiKey";
 
 import {getFirestore} from "firebase/firestore";
 const firebaseConfig = {
-  apiKey: "AIzaSyDe3ULxaI5sl3xEWCNRa7109TFGBjDjwLc",
+  apiKey: keys.firebaseKey,
   authDomain: "webtoon-dabom.firebaseapp.com",
   projectId: "webtoon-dabom",
   storageBucket: "webtoon-dabom.appspot.com",
@@ -18,6 +18,5 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const fireStoreDB = getFirestore(app);
-export const storage = getStorage(app);
 
 export default app;

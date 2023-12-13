@@ -13,24 +13,32 @@
             </View>
 
 */ 
-import React, { useState } from 'react';
+import React, { useState, useEffect} from 'react';
 import { View, Text, TextInput, Pressable} from 'react-native';
 import { updateProfile } from 'firebase/auth';
-import { auth } from './../../../firebaseConfig';
+import {auth} from './../../../firebaseConfig';
 import { styles } from './Styling';
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import { useContext } from 'react';
+import { LoadingContext } from './../../loading/LoadingContext';
+import LoadingSpinner from './../../loading/LoadingSpinner';  
 import { useNavigation } from '@react-navigation/native';
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function Profile() {
 
-    const [name, setName] = useState('');
     const navigation = useNavigation();
+    const { loading } = useContext(LoadingContext);
+    const { spinner } = useContext(LoadingContext);
+
+    const [name, setName] = useState('');
     const [error, setError] = useState(null);
     
-    // 회원가입 버튼을 눌렀을 때의 처리
- const handleSignup = async () => {
+  
+  const handleSignup = async () => {
     let newError = '';
     try {
+      spinner.start();
       if (!name) {
         newError = '닉네임을 입력해주세요.';
       } else if (name.length < 2) {
@@ -39,8 +47,11 @@ export default function Profile() {
         
         updateProfile(auth.currentUser, {
           displayName: name,
-        }).then(() => {
-          navigation.navigate('Home' , {screen: '프로필'});
+          
+        }).then(async() => {
+          await auth.signOut();
+          AsyncStorage.setItem('name', name);
+          navigation.navigate('Home', {screen: '프로필'});
         }).catch((error) => {
           console.error("에러 났습니다: " + error)
         });
@@ -49,10 +60,15 @@ export default function Profile() {
       setError(newError);
     } catch (e) {
       console.log("Error adding document: ", e);
-    } 
+    } finally {
+      spinner.stop();
+    }
+
   };  
+  AsyncStorage;
     return (
         <View style={styles.mainScreen}>
+          {loading && <LoadingSpinner />}
           <View style={styles.topScreen}>
             {error && <Text style={styles.error}>{error}</Text>}
             <Text style={styles.label}>이름:</Text>
@@ -63,7 +79,7 @@ export default function Profile() {
               autoCapitalize="none"
               placeholderTextColor="#aaa"
               style={styles.input}
-            />      
+            /> 
           </View>
           <View style={styles.bottomScreen}>
             <Pressable style={styles.button} onPress={handleSignup}>

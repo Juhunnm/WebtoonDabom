@@ -51,9 +51,10 @@ export default function ResetPassword({ setScreen }) {
               <Text style={styles.buttonText}>보내기</Text>
               </Pressable>
                 <View style={styles.sameLine}>
-          <TouchableOpacity onPress={() => navigation.navigate('LogIn')}>
+          <TouchableOpacity onPress={() =>  navigation.navigate('Home' , {screen: '프로필'})}>
             <Text style={styles.link}>로그인하기</Text>
           </TouchableOpacity>
+          <View style={styles.verticalLine}></View>
           <TouchableOpacity  onPress={() => navigation.navigate('SignUp')}>
             <Text style={[styles.link, { color: '#333' }]}>계정을 만들기</Text>
           </TouchableOpacity>

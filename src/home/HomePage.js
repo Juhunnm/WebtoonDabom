@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import {
     View,
     StyleSheet,
@@ -8,7 +8,8 @@ import { createMaterialTopTabNavigator } from '@react-navigation/material-top-ta
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 
-
+import { LoadingContext } from '../loading/LoadingContext';
+import LoadingSpinner from '../loading/LoadingSpinner';
 
 import WebtoonList from './components/WebtoonList';
 
@@ -24,8 +25,12 @@ const PLATFORM_SIZE = WINDOW_HEIGHT * 0.13;
 
 const HomePage = () => {
     const navigation = useNavigation();
+
+    const { loading } = useContext(LoadingContext);
+    const { spinner } = useContext(LoadingContext);
+
     // 플랫폼 선택 state
-    const [isNaverChecked, setNaverChecked] = useState(true);
+    const [isNaverChecked, setNaverChecked] = useState(false);
     const [isKakaoChecked, setKakaoChecked] = useState(false);
     const [isPageChecked, setPageChecked] = useState(false);
     const [isLejinChecked, setLejinChecked] = useState(false);
@@ -33,6 +38,7 @@ const HomePage = () => {
     // 웹툰 정보 API 요청
     const fetchWebtoonData = async (apiUrl) => {
         try {
+            spinner.start();
             const storedData = await AsyncStorage.getItem('webtoons');
 
             if (storedData !== null) {
@@ -58,6 +64,8 @@ const HomePage = () => {
         } catch (e) {
             console.error(`An error occurred: ${e.message}`);
             return null;
+        } finally {
+            spinner.stop();
         }
     };
 
@@ -72,6 +80,7 @@ const HomePage = () => {
 
     return (
         <View style={styles.container}>
+            {loading && <LoadingSpinner />}
             <View style={styles.platformList}>
                 <PlatformButton
                     isChecked={isNaverChecked}

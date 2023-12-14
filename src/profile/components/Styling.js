@@ -12,15 +12,20 @@ export const styles = StyleSheet.create({
       alignItems: 'center',
       backgroundColor: '#fff',
       
+      
     },
     topScreen: {
       flex: 3,
       justifyContent: 'flex-start',
       
+      
     },
     bottomScreen: {
       flex: 1,
       justifyContent: 'flex-end',
+      alignContent: 'center',
+      alignItems: 'center',
+      
     },
     header: {
       fontSize: WINDOW_HEIGHT * 0.05,
@@ -70,17 +75,30 @@ export const styles = StyleSheet.create({
     sameLine: {
       flex: 1,
       flexDirection: 'row',
-      justifyContent: 'space-between',
+      justifyContent: 'center',
       padding: 10,
+      
+    },
+    verticalLine: {
+      height: '20%',
+      width: 2, // Adjust the width of the line as needed
+      backgroundColor: '#aaa', // Adjust the color of the line as needed
+      verticalAlign: 'middle',
+      marginHorizontal: 20,
     },
     mainBox: {
       flex: 1,
       flexDirection: 'column',
       backgroundColor: 'white',
+      borderColor: '#ccc',
+      borderWidth: 1,
+      borderRadius: 10,
+      width: WINDOW_WIDTH * 0.98,
+      marginBottom: 10,
   },
   imageBox: {
       width: '100%',
-      height: 200,
+      height: WINDOW_HEIGHT * 0.32,
       justifyContent: 'center',
       alignItems: 'center',
   },
@@ -90,6 +108,8 @@ export const styles = StyleSheet.create({
       height: WINDOW_HEIGHT * 0.1,
       justifyContent: 'flex-start',
       alignItems: 'center',
+      
+
   },
   alignLeft:{
       alignSelf: 'flex-start',
@@ -144,4 +164,37 @@ uploadBox: {
   uploadIcon: {
     marginRight: 10,
   },
-  });
+  profileEdit: {
+    // maker an overlay to make the edit icon on the profile image
+    position: 'absolute',
+    width: '28%',
+    height: '45%',
+    alignItems: 'flex-end',
+    justifyContent: 'flex-end',
+    flexDirection: 'row',
+  },
+  profileEditIcon: {
+    
+  },
+  profileEditIconBox: {
+    width: WINDOW_WIDTH * 0.07,
+    height: WINDOW_HEIGHT * 0.035,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#000',
+    borderRadius: 100,
+    borderColor: '#fff',
+    borderWidth: 3,
+
+
+  },
+  logout: {
+    fontSize: 15,
+    fontWeight: 'bold',
+    color: 'gray',
+    padding: 70,
+    alignSelf: 'center',
+    
+  },
+  
+});

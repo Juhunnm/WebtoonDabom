@@ -19,8 +19,18 @@ const WINDOW_WIDTH = Dimensions.get('window').width;
 
 const ITEM_SIZE = WINDOW_HEIGHT * 0.17;
 
+const platFormMappings = {
+    'naver': '네이버 웹툰',
+    'kakao': '카카오 웹툰',
+    'kakaoPage': '카카오 페이지',
+};
+const convertPlatformToKorean = (platform) => {
+    return platFormMappings[platform] || platform;
+};
 
 const WebtoonListItem = memo(({ item, onPress }) => {
+    // 연재요일 매핑하기
+    const koreanPlatforms = convertPlatformToKorean(item.service);
     return (
         <TouchableOpacity style={styles.item} onPress={onPress}>
             {(() => {
@@ -41,15 +51,13 @@ const WebtoonListItem = memo(({ item, onPress }) => {
             })()}
 
             <View style={styles.textContainer}>
-                <Text style={styles.itemName}>{item.title}</Text>
-                <Text style={styles.itemText}>{item.author}</Text>
-                {item.additional.rest && <Text>휴재!</Text>}
-                <TouchableOpacity style={styles.itemUser}
-                    onPress={() => {
-                        console.log(item.additional);
-                    }}>
-                    <Text>{item.service}</Text>
-                </TouchableOpacity>
+                <View style={{ gap: 15 }}>
+                    <Text style={styles.itemName}>{item.title}</Text>
+                    <Text style={styles.itemText}>{item.author}</Text>
+                </View>
+                
+                <Text style={styles.itemUser}>{koreanPlatforms}</Text>
+               
             </View>
         </TouchableOpacity>
     );
@@ -93,8 +101,10 @@ const SearchPage = ({ navigation: { navigate }, route }) => {
     // Text입력할때마다 값에 맞는 데이터 불러오기
     useEffect(() => {
         if (searchQuery) {
+            const lowerCaseQuery = searchQuery.toLowerCase();
             const filteredData = webtoons.filter(webtoon =>
-                webtoon.title.toLowerCase().includes(searchQuery.toLowerCase())
+                webtoon.title.toLowerCase().includes(lowerCaseQuery) ||
+                (webtoon.author && webtoon.author.toLowerCase().includes(lowerCaseQuery))
             );
             setFilteredWebtoons(filteredData);
         } else {
@@ -106,16 +116,7 @@ const SearchPage = ({ navigation: { navigate }, route }) => {
         <WebtoonListItem
             item={item}
             onPress={() => {
-                navigation.navigate('WebtoonDetailPage', {
-                    title: item.title,
-                    author: item.author,
-                    url: item.url,
-                    img: item.img,
-                    service: item.service,
-                    updateDays: item.updateDays,
-                    fanCount: item.fanCount,
-                    additional: item.additional,
-                });
+                navigation.navigate('WebtoonDetailPage', item);
             }}
         />, []
     );
@@ -182,7 +183,7 @@ const styles = StyleSheet.create({
         flex: 1,
         height: '100%',
         flexDirection: "column",
-        justifyContent: "space-around",
+        justifyContent: "space-between",
         paddingHorizontal: 10,
     },
     pageImageStyles: {

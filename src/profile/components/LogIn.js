@@ -4,31 +4,44 @@ import {signInWithEmailAndPassword} from 'firebase/auth';
 import { auth } from '../../../firebaseConfig';
 import {styles} from './Styling';
 import { useNavigation } from '@react-navigation/native';
+import { useContext } from 'react';
+import { LoadingContext } from './../../loading/LoadingContext';
+import LoadingSpinner from './../../loading/LoadingSpinner';
 
 export default function LogIn() {
     const navigation = useNavigation();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState(null);
+    const { loading } = useContext(LoadingContext);
+    const { spinner } = useContext(LoadingContext);
   
     const loginUser = async () => {
       try {
+        spinner.start();
         await signInWithEmailAndPassword(auth, email, password);
+        navigation.navigate('Home', {screen: '프로필'});
       } catch (error) {
         if (error.code === 'auth/invalid-email' || error.code === 'auth/wrong-password') {
           setError('Your email or password was incorrect');
-        } else if (error.code === 'auth/email-already-in-use') {
+        } else if (error.code === 'auth/email-already-in-use')
+         {
           setError('An account with this email already exists');
         } else {
           setError('이메일이랑 비밀번호를 확인해주시고 다시 로그인해주세요');
+        
           //reflesh after 5 seconds
           setTimeout(() => {
             setError(null);
           }, 5000);
-    };
-      }}
+    }
+      } finally {
+        spinner.stop();
+      }
+    }
     return (
       <View style={styles.mainScreen} >
+        {loading && <LoadingSpinner />}
         <View style={styles.topScreen}>
   
          
@@ -64,6 +77,7 @@ export default function LogIn() {
           <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
             <Text style={styles.link}>계정을 만들기</Text>
           </TouchableOpacity>
+          <View style={styles.verticalLine}></View>
           <TouchableOpacity  onPress={() => navigation.navigate('ResetPassword')}>
             <Text style={[styles.link, { color: '#333' }]}>비밀번호를 재설정</Text>
           </TouchableOpacity>

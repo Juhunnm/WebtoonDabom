@@ -53,10 +53,6 @@ const StackNavigation = () => {
             
             {/* 로그인 페이지 그룹 */}
             <Stack.Group>
-            <Stack.Screen name="LogIn" component={LogIn} options={{
-                    title: '로그인하세요',
-                    headerBackTitleVisible: false, // 뒤로가기 버튼 옆의 텍스트를 표시하지 않음
-                }} />
                 <Stack.Screen name="ResetPassword" component={ResetPassword} options={{
                     title: '비밀번호를 되찾으세요',
                     headerBackTitleVisible: false, // 뒤로가기 버튼 옆의 텍스트를 표시하지 않

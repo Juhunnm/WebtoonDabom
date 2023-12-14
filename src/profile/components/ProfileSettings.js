@@ -45,6 +45,7 @@ export function LoggedIn() {
     return (
         <View style={styles.mainScreen}>
           <View style={styles.topScreen}>
+        
             <View style={styles.mainBox}>
               <View style={styles.imageBox}>
               <Image
@@ -59,7 +60,10 @@ export function LoggedIn() {
                 </View>
                 </View>
               </View>
-    
+              </View> 
+
+
+              <View style={styles.mainBox}>
               <View style={styles.userInfoBox}>
                 <View style={styles.leftbox}>
                   <Text style={styles.alignLeft}>이름</Text>
@@ -70,8 +74,9 @@ export function LoggedIn() {
                   <Text style={styles.alignRight}>{userEmail}</Text>
                 </View>
               </View>
+              </View>
             </View>
-          </View>
+            
           <View style={styles.bottomScreen}>
             <View style={[styles.mainBox, {justifyContent:'flex-end'}]}>
             <TouchableOpacity onPress={logout}>

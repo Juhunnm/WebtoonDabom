@@ -22,7 +22,7 @@ const BottomTabNavigation = () => {
     const navigation = useNavigation();
 
     const handleSearch = () => {
-        navigation.navigate("SearchPage");
+        navigation.navigate("SearchPage",{isWrite:false});
     }
     const handleEdit= () => {
         navigation.navigate("EditProfile");

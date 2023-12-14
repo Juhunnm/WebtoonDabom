@@ -5,22 +5,26 @@ import { fireStoreDB } from '../../firebaseConfig';
 import { useNavigation } from '@react-navigation/native';
 
 const AddCommunity = () => {
-    
     const navigation = useNavigation();
     const [newTitle, setNewTitle] = useState("");
     const [newSubTitle, setNewSubTitle] = useState("");
-    //저장 DB
-    const addPostDB ={
-        title : newTitle,
-        subTitle : newSubTitle,
-    }
+
     const addPost = async () => {
         try {
+            let today = new Date();
+            let year = today.getFullYear();
+            let month = ('0' + (today.getMonth() + 1)).slice(-2);
+            let day = ('0' + today.getDate()).slice(-2);
+            let dateString = year + '-' + month  + '-' + day;
+            console.log(dateString);
+
             const postsCollection = collection(fireStoreDB, 'posts');
-            await addDoc(postsCollection, {
-                ...addPostDB
+            const docRef = await addDoc(postsCollection, {
+                title: newTitle,
+                subTitle: newSubTitle,
+                date: dateString,
             });
-            console.log('저장 완료');
+            console.log('저장 완료, 새로운 ID: ', docRef.id);
             navigation.goBack();
         } catch (error) {
             console.error('Error : ', error);
@@ -28,12 +32,11 @@ const AddCommunity = () => {
     };
 
     const handleSaveArray = () => {
-        if(newTitle ==='' && newSubTitle ===''){
-            Alert.alert('내용이없습니다.','내용을 입력해주세요');
-        }else{
-            
-        addPost();
-        alert('글 작성이 되었습니다.');
+        if (newTitle === '' && newSubTitle === '') {
+            Alert.alert('내용이없습니다.', '내용을 입력해주세요');
+        } else {
+            addPost();
+            alert('글 작성이 되었습니다.');
         }
     };
 
@@ -42,7 +45,7 @@ const AddCommunity = () => {
             <View style={styles.TitleInput}>
                 <TextInput
                     placeholder="제목을 작성해주세요"
-                    placeholderTextColor = 'white'
+                    placeholderTextColor='white'
                     value={newTitle}
                     onChangeText={(text) => setNewTitle(text)}
                     style={{ flex: 1 }}
@@ -51,11 +54,11 @@ const AddCommunity = () => {
             <View style={[styles.TitleInput, styles.textInput]}>
                 <TextInput
                     placeholder="본문을 작성해주세요"
-                    placeholderTextColor = 'white'
+                    placeholderTextColor='white'
                     value={newSubTitle}
                     onChangeText={(text) => setNewSubTitle(text)}
                     multiline
-                    numberOfLines={10} 
+                    numberOfLines={10}
                     style={{ flex: 1 }}
                 />
             </View>
@@ -84,10 +87,10 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         paddingLeft: 10,
         paddingRight: 10,
-        color : 'white'
+        color: 'white'
     },
     textInput: {
-        height: '50%', 
+        height: '50%',
     },
     button: {
         backgroundColor: 'black',

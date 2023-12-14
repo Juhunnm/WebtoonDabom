@@ -14,7 +14,7 @@ const AddCommunity = ({ navigation: { navigate }, route }) => {
     const [newTitle, setNewTitle] = useState("");
     const [newSubTitle, setNewSubTitle] = useState("");
 
-
+    const [emotion,setEmotion] = useState(0);
     const [uid, setUid] = useState('');
     const [displayName, setDisplayName] = useState('');
     // 웹툰 정보
@@ -135,7 +135,8 @@ const AddCommunity = ({ navigation: { navigate }, route }) => {
         autor: author,
         uid: uid,
         displayName: displayName,
-
+        emotion: emotion,
+        isDeleted: false,
     }
     const addPost = async () => {
         try {

@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View, TouchableOpacity, TextInput, ScrollView, StyleSheet, Alert } from 'react-native';
+import { Text, View, TouchableOpacity, TextInput, ScrollView, StyleSheet, Alert, Image } from 'react-native';
 import { MaterialCommunityIcons, FontAwesome } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
-import { Image } from 'expo-image';
 import { doc, collection, addDoc } from "firebase/firestore";
 import { fireStoreDB } from '../../firebaseConfig';
 import { auth } from '../../firebaseConfig';
@@ -54,10 +53,9 @@ const AddCommunity = ({ navigation: { navigate }, route }) => {
             quality: 1,
             aspect: [1, 1]
         });
-        if (result.cancelled) {
+        if (result.canceled) {
             return null; // 이미지 업로드 취소한 경우
         }
-        console.log(result);
         // 이미지 업로드 결과 및 이미지 경로 업데이트
 
         setImageUrl(result.assets[0].uri);
@@ -65,12 +63,16 @@ const AddCommunity = ({ navigation: { navigate }, route }) => {
 
 
     const uploadImageToFirebase = async (imageUri) => {
-        // 이미지 파일 이름 (예: image_12345.jpg)
+        console.log(imageUri);
         const fileName = `profile_image_${new Date().getTime()}.jpg`;
+        console.log('a')
         const storageRef = ref(storage, `profileImages/${fileName}`);
+        console.log('b')
 
         try {
             // 이미지를 Blob 형태로 변환
+            
+            console.log('c')
             if (imageUri) {
                 console.log("변환시작")
                 const response = await fetch(imageUri);
@@ -144,8 +146,12 @@ const AddCommunity = ({ navigation: { navigate }, route }) => {
             let dateString = year + '-' + month + '-' + day;
             console.log(dateString);
 
+            console.log("1")
             const firebaseImageUrl = await uploadImageToFirebase(selectImageUrl);
+            console.log("2")
             const postsCollection = collection(fireStoreDB, 'posts');
+            
+            console.log("3")
             const docRef = await addDoc(postsCollection, {
                 ...firebase,
                 imageURL: firebaseImageUrl,

@@ -5,6 +5,8 @@ import { styles } from './Styling';
 import { auth } from './../../../firebaseConfig';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Alert } from 'react-native';
+// navigation
+import { useNavigation } from '@react-navigation/native';
 
 
 
@@ -12,15 +14,20 @@ import { Alert } from 'react-native';
 export function LoggedIn() {
     const [userEmail, setUserEmail] = useState('');
     const [name, setName] = useState('');
+    const [imgURL, setImgURL] = useState('');
+    const navigation = useNavigation();
 
     useEffect(() => {
         const getUserEmail = async () => {
             try {
                 const user = auth.currentUser;
                 const name = user.displayName;
+                const imgURL = user.photoURL;
+
                 if (user) {
                     setUserEmail(user.email);
                     setName(name);
+                    setImgURL(imgURL);
                 }
             } catch (e) {
                 console.error(e);
@@ -49,15 +56,14 @@ export function LoggedIn() {
             <View style={styles.mainBox}>
               <View style={styles.imageBox}>
               <Image
-        source={require('./../../../img/kakaoPageIcon.png')}
+        source={imgURL ? { uri: imgURL } : require('./../../../img/DefaultProfile.png')}
         style={styles.image}
       />
             <View style={styles.profileEdit}>
-              <View style={styles.profileEditIconBox}>
-                <TouchableOpacity >
+        
+                <TouchableOpacity style={styles.profileEditIconBox} onPress={() => navigation.navigate('Profile')} >
                     <Icon name="plus" size={10} color="white" style={styles.profileEditIcon} />
                 </TouchableOpacity>
-                </View>
                 </View>
               </View>
               </View> 

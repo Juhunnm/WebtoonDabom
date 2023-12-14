@@ -196,5 +196,25 @@ uploadBox: {
     alignSelf: 'center',
     
   },
+  LoginScreen: {
+    flex: 1,
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+
+  },
+  LoginScreenInputBox:{
+    width: 300,
+    marginTop: 10,
+  },
+  LoginScreenButtonBox: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: 300,
+    marginTop: 10,
+  },
+
+
   
 });

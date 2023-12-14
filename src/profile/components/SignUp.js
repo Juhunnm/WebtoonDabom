@@ -4,7 +4,6 @@ import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth } from './../../../firebaseConfig';
 import { styles } from './Styling';
 import { useNavigation } from '@react-navigation/native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useContext } from 'react';
 import { LoadingContext } from './../../loading/LoadingContext';
 import LoadingSpinner from './../../loading/LoadingSpinner';  
@@ -23,9 +22,11 @@ export default function Signup() {
         spinner.start();
       if (password === confirmPassword) {
         await createUserWithEmailAndPassword(auth, email, password);
-        AsyncStorage.setItem('email', email);
-        AsyncStorage.setItem('password', password);
-        navigation.navigate('Profile');
+        navigation.navigate('Profile',{
+          email: email,
+          password: password,
+        });
+        
       } else {
         setError("비밀번호가 일치하지 않습니다");
       }
@@ -36,9 +37,6 @@ export default function Signup() {
       spinner.stop();
     }
   };
-
-  // Use AsyncStorage here to fix the problem
-  AsyncStorage;
 
   return (
     <View style={styles.mainScreen}>

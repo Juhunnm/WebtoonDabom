@@ -34,11 +34,14 @@ const CommunityPage = () => {
             console.error('Error : ', error);
         }
     };
-
-    // 컴포넌트가 마운트될 때 데이터 불러오기
     useEffect(() => {
-        firebaseList();
-    }, []);
+        const unsubscribe = navigation.addListener('focus', () => {
+            firebaseList();
+        });
+
+        // 컴포넌트 언마운트 시 리스너 제거
+        return unsubscribe;
+    }, [navigation])
 
     // 글 작성 페이지로 이동하는 함수
     const handleAddList = () => {

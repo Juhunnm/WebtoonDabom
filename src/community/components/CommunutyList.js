@@ -2,14 +2,20 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import { fireStoreDB } from '../../../firebaseConfig';
+import { doc, collection, getDocs,updateDoc, increment } from 'firebase/firestore';
 
 const CommunityList = ({ date, title, subTitle,id }) => {
 
     const navigation = useNavigation();
     const [isIcons, setIsIcons] = useState(false);
-    const [count, setCount] = useState(0);
+    const [count, setCount] = useState("");
 
-    const handleIcon = () => {
+    const handleIcon = async() => {
+        const postRef = doc(fireStoreDB,"posts", id);
+        await updateDoc(postRef, {
+            emotion: increment(1)
+        });
         console.log(date);
         setIsIcons(!isIcons);
         setCount(prevCount => isIcons ? prevCount - 1 : prevCount + 1);

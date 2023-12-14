@@ -3,26 +3,37 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 
-const CommunityList = ({ title, subTitle }) => {
+const CommunityList = ({ date, title, subTitle,id }) => {
+
     const navigation = useNavigation();
     const [isIcons, setIsIcons] = useState(false);
     const [count, setCount] = useState(0);
 
     const handleIcon = () => {
+        console.log(date);
         setIsIcons(!isIcons);
         setCount(prevCount => isIcons ? prevCount - 1 : prevCount + 1);
     };
 
+    const handleMove = () => {
+        navigation.navigate("DetailedCommunityPage", { title, subTitle ,id});
+    }
+
     return (
         <View style={styles.communityListContainer}>
-            <Text style={styles.title}>{title}</Text>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                <Text style={styles.title}>{title}</Text>
+                <Text>{date}</Text>
+            </View>
             <View style={styles.subTitle}>
-                <Text>{subTitle}</Text>
+                <Text
+                    style={{color : 'black'}}
+                >{subTitle}</Text>
             </View>
             <View style={styles.buttonContainer}>
                 <TouchableOpacity
                     onPress={() => {
-                        navigation.navigate('DetailedCommunityPage');
+                        handleMove();
                     }}
                 >
                     <MaterialCommunityIcons name="chat-outline" size={24} color={"white"} />
@@ -47,15 +58,14 @@ const styles = StyleSheet.create({
         padding: 10,
         backgroundColor: '#858585',
         borderRadius: 10,
-        marginBottom : 10,
+        marginBottom: 10,
     },
     title: {
-        fontSize: 20,
+        fontSize: 30,
         fontWeight: 'bold',
         color: 'white',
     },
     subTitle: {
-        backgroundColor:'#CACACA',
         marginVertical: 10,
         borderRadius: 10,
         padding: 10,

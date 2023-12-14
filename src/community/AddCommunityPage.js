@@ -1,27 +1,154 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Text, View, TouchableOpacity, TextInput, ScrollView, StyleSheet, Alert } from 'react-native';
+import { MaterialCommunityIcons, FontAwesome } from '@expo/vector-icons';
+import * as ImagePicker from 'expo-image-picker';
+import { Image } from 'expo-image';
 import { doc, collection, addDoc } from "firebase/firestore";
 import { fireStoreDB } from '../../firebaseConfig';
+import { auth } from '../../firebaseConfig';
 import { useNavigation } from '@react-navigation/native';
+import { storage } from '../../firebaseConfig';
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 
-const AddCommunity = () => {
+const AddCommunity = ({ navigation: { navigate }, route }) => {
     const navigation = useNavigation();
     const [newTitle, setNewTitle] = useState("");
     const [newSubTitle, setNewSubTitle] = useState("");
 
+
+    const [uid, setUid] = useState('');
+    const [displayName, setDisplayName] = useState('');
+    // 웹툰 정보
+    const [webtoonID, setWebtoonID] = useState('');
+    const [webtoonTitle, setWebtoonTitle] = useState('');
+    const [author, setAuthor] = useState('');
+    const [webtoonImage, setWebtoonImage] = useState('');
+
+    useEffect(() => {
+        const user = auth.currentUser;
+        if (user) {
+            setUid(user.uid);
+            setDisplayName(user.displayName);
+            console.log(uid)
+        }
+    }, [])
+
+
+    //image  address
+    const [selectImageUrl, setImageUrl] = useState(null);
+    //권한 요청
+    const [status, requestPermission] = ImagePicker.useMediaLibraryPermissions();
+
+    const uploadImage = async () => {
+        // 권한 확인 코드: 권한 없으면 물어보고, 승인하지 않으면 함수 종료
+        if (!status?.granted) {
+            const permission = await requestPermission();
+            if (!permission.granted) {
+                return null;
+            }
+        }
+        // 이미지 업로드 기능
+        const result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: false,
+            quality: 1,
+            aspect: [1, 1]
+        });
+        if (result.cancelled) {
+            return null; // 이미지 업로드 취소한 경우
+        }
+        console.log(result);
+        // 이미지 업로드 결과 및 이미지 경로 업데이트
+
+        setImageUrl(result.assets[0].uri);
+    };
+
+
+    const uploadImageToFirebase = async (imageUri) => {
+        // 이미지 파일 이름 (예: image_12345.jpg)
+        const fileName = `profile_image_${new Date().getTime()}.jpg`;
+        const storageRef = ref(storage, `profileImages/${fileName}`);
+
+        try {
+            // 이미지를 Blob 형태로 변환
+            if (imageUri) {
+                console.log("변환시작")
+                const response = await fetch(imageUri);
+                const blob = await response.blob();
+
+                console.log("변환완료")
+                // Blob을 Firebase Storage에 업로드
+                await uploadBytesResumable(storageRef, blob);
+
+                console.log("업로드시작")
+                // 업로드된 이미지의 URL 가져오기
+                const url = await getDownloadURL(storageRef);
+                
+                console.log("업로드 완료")
+                return url;
+            } else {
+                return null;
+            }
+
+        } catch (error) {
+            console.error("Error uploading image: ", error);
+            return null;
+        }
+    };
+
+    const getWebtoonData = () => {
+
+        const {
+            _id,
+            title,
+            author,
+            url,
+            img,
+            service,
+            updateDays,
+            fanCount,
+            additional,
+        } = route.params.item;
+
+        // console.log(title);
+        setWebtoonID(_id);
+        setWebtoonTitle(title);
+        setAuthor(author);
+        setWebtoonImage(img);
+    }
+
+    useEffect(() => {
+        console.log('gd');
+        if (route.params?.fromScreen === 'SearchPage') {
+            getWebtoonData();
+        }
+    }, [route.params])
+
+    const firebase = {
+        title: newTitle,
+        subTitle: newSubTitle,
+        webtoonID: webtoonID,
+        webtoonImage: webtoonImage,
+        webtoonTitle: webtoonTitle,
+        autor: author,
+        uid: uid,
+        displayName: displayName,
+
+    }
     const addPost = async () => {
         try {
             let today = new Date();
             let year = today.getFullYear();
             let month = ('0' + (today.getMonth() + 1)).slice(-2);
             let day = ('0' + today.getDate()).slice(-2);
-            let dateString = year + '-' + month  + '-' + day;
+            let dateString = year + '-' + month + '-' + day;
             console.log(dateString);
 
+            const firebaseImageUrl = await uploadImageToFirebase(selectImageUrl);
             const postsCollection = collection(fireStoreDB, 'posts');
             const docRef = await addDoc(postsCollection, {
-                title: newTitle,
-                subTitle: newSubTitle,
+                ...firebase,
+                imageURL: firebaseImageUrl,
                 date: dateString,
             });
             console.log('저장 완료, 새로운 ID: ', docRef.id);
@@ -39,6 +166,11 @@ const AddCommunity = () => {
             alert('글 작성이 되었습니다.');
         }
     };
+
+    const handleSelWebtoon = () => {
+        navigation.navigate('SearchPage', { isWrite: true });
+    }
+
 
     return (
         <ScrollView contentContainerStyle={styles.main}>
@@ -61,7 +193,23 @@ const AddCommunity = () => {
                     numberOfLines={10}
                     style={{ flex: 1 }}
                 />
+                <View style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
+                    <TouchableOpacity onPress={handleSelWebtoon}>
+                        <MaterialCommunityIcons name="pound" size={24} color="white" />
+                    </TouchableOpacity>
+                    <Text style={{ marginLeft: 5, color: 'white' }}>{webtoonTitle}</Text>
+                    <TouchableOpacity
+                        onPress={uploadImage}
+                    >
+                        <FontAwesome name="image" size={24} color="white" />
+                    </TouchableOpacity>
+                    <Image
+                        source={selectImageUrl ? { uri: selectImageUrl } : require('../../img/DefaultProfile.png')}
+                        style={{height: 100, width: 100}}
+                    />
+                </View>
             </View>
+
             <TouchableOpacity
                 onPress={handleSaveArray}
                 style={styles.button}

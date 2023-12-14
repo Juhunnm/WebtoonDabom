@@ -55,9 +55,9 @@ const WebtoonListItem = memo(({ item, onPress }) => {
                     <Text style={styles.itemName}>{item.title}</Text>
                     <Text style={styles.itemText}>{item.author}</Text>
                 </View>
-                
+
                 <Text style={styles.itemUser}>{koreanPlatforms}</Text>
-               
+
             </View>
         </TouchableOpacity>
     );
@@ -116,7 +116,14 @@ const SearchPage = ({ navigation: { navigate }, route }) => {
         <WebtoonListItem
             item={item}
             onPress={() => {
-                navigation.navigate('WebtoonDetailPage', item);
+                if (route.params.isWrite) {
+                    navigation.navigate('AddCommunityPage', {
+                        item: item,
+                        fromScreen: 'SearchPage'
+                    });
+                } else {
+                    navigation.navigate('WebtoonDetailPage', item);
+                }
             }}
         />, []
     );

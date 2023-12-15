@@ -1,58 +1,64 @@
 import React, { useState, useEffect } from 'react';
-import { MaterialCommunityIcons, FontAwesome } from '@expo/vector-icons';
 import { View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
-import CommunityList from './components/CommunutyList';
+import { FontAwesome } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { collection, getDocs } from 'firebase/firestore';
 import { fireStoreDB } from '../../firebaseConfig';
+import CommunityList from './components/CommunutyList';
 
 const CommunityPage = () => {
     const navigation = useNavigation();
-    const [listData, setListData] = useState([]); // 글 목록 데이터 상태
-    const [searchList, setSearchList] = useState(''); // 검색어 상태
+    const [listData, setListData] = useState([]);
+    const [searchList, setSearchList] = useState('');
+    const [selectedService, setSelectedService] = useState('');
 
-    // 파이어베이스에서 데이터를 불러오는 함수
     const firebaseList = async () => {
         try {
-            // 'posts' 컬렉션에서 데이터 가져오기
-            const querySnapshot = await getDocs(collection(fireStoreDB, 'posts'));
-
-            // 가져온 데이터를 배열로 변환하여 상태 업데이트
-            const data = querySnapshot.docs.map((doc) => {
-                const postData = doc.data();
-                return {
-                    title: postData.title,
-                    subTitle: postData.subTitle,
-                    date : postData.date,
+            if (selectedService) {
+                const query = collection(fireStoreDB, `posts/${selectedService}/posts`);
+                const querySnapshot = await getDocs(query);
+                const data = querySnapshot.docs.map((doc) => ({
                     id: doc.id,
-                    // delete :postDate
-                };
-            });
-            
-            setListData(data);
+                    ...doc.data()
+                }));
+                setListData(data);
+            } else {
+                const services = ['naver', 'kakaoPage', 'page']; 
+                let allData = [];
+                for (const service of services) {
+                    const query = collection(fireStoreDB, `posts/${service}/posts`);
+                    const querySnapshot = await getDocs(query);
+                    const data = querySnapshot.docs.map((doc) => ({
+                        id: doc.id,
+                        ...doc.data()
+                    }));
+                    allData = allData.concat(data);
+                }
+                setListData(allData);
+            }
         } catch (error) {
             console.error('Error : ', error);
         }
     };
-
-    // 컴포넌트가 마운트될 때 데이터 불러오기
+    
     useEffect(() => {
         firebaseList();
-    }, []);
+    }, [selectedService]);
 
-    // 글 작성 페이지로 이동하는 함수
     const handleAddList = () => {
         navigation.navigate('AddCommunityPage');
     };
 
-    // 검색어에 맞는 글 목록 필터링
+    const handleServiceSelect = (service) => {
+        setSelectedService(prevService => prevService === service ? '' : service);
+    };
+    
     const filteredList = listData.filter(
-        (v) => v.title.toLowerCase().includes(searchList.toLowerCase())
+        item => item.title.toLowerCase().includes(searchList.toLowerCase())
     );
 
     return (
         <View style={styles.container}>
-            {/* 검색 바 */}
             <View style={styles.searchBar}>
                 <TextInput
                     style={styles.input}
@@ -64,16 +70,27 @@ const CommunityPage = () => {
                 <FontAwesome name="search" size={24} color="black" />
             </View>
 
-            {/* 글 목록 출력 */}
+            <View style={styles.serviceButtonContainer}>
+                {['naver', 'kakaoPage', 'page'].map((service) => (
+                    <TouchableOpacity
+                        key={service}
+                        style={[
+                            styles.serviceButton,
+                            selectedService === service && styles.selectedServiceButton,
+                        ]}
+                        onPress={() => handleServiceSelect(service)}
+                    >
+                        <Text style={styles.serviceButtonText}>#{service.toUpperCase()}</Text>
+                    </TouchableOpacity>
+                ))}
+            </View>
+
             <ScrollView>
                 {filteredList.map((data, idx) => (
-                    <View
-                        key={idx}>
-                        <CommunityList title={data.title} subTitle={data.subTitle} date={data.date} id={data.id}/>
-                    </View>
+                    <CommunityList key={idx} {...data} />
                 ))}
             </ScrollView>
-            {/* 글 작성 버튼 */}
+
             <TouchableOpacity style={styles.createButton} onPress={handleAddList}>
                 <Text>글 작성</Text>
             </TouchableOpacity>
@@ -81,7 +98,6 @@ const CommunityPage = () => {
     );
 };
 
-// 스타일 정의
 const styles = StyleSheet.create({
     container: {
         backgroundColor: 'white',
@@ -102,6 +118,22 @@ const styles = StyleSheet.create({
     input: {
         flex: 1,
         color: '#fff',
+    },
+    serviceButtonContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        marginVertical: 10,
+    },
+    serviceButton: {
+        backgroundColor: '#d3d3d3',
+        padding: 10,
+        borderRadius: 5,
+    },
+    selectedServiceButton: {
+        backgroundColor: '#a3a3a3',
+    },
+    serviceButtonText: {
+        color: 'white',
     },
     createButton: {
         backgroundColor: '#d3d3d3',

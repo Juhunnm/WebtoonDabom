@@ -13,7 +13,7 @@ import WebViewImage from './components/WebViewImage';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CommunityList from '../community/components/CommunutyList';
 import { fireStoreDB } from '../../firebaseConfig';
-import { collection, query, where, getDocs, orderBy } from "firebase/firestore";
+import { collection, query, where, getDoc, orderBy, doc } from "firebase/firestore";
 
 
 import { Image } from "react-native-expo-image-cache";
@@ -123,19 +123,26 @@ const WebtoonDetailPage = ({ navigation: { navigate }, route }) => {
 
     const fetchDocs = async () => {
         try {
-            const q = query(collection(fireStoreDB, "posts"),
-                where("webtoonID", "==", _id),
-            );
-
-            const querySnapshot = await getDocs(q);
-            const fetchedPosts = querySnapshot.docs.map(doc => ({
-                id: doc.id,
-                ...doc.data()
-            }));
-            console.log("게시글 정보 가져옴");
-            setPosts(fetchedPosts);
+            // 문서 참조 생성
+            const postDocRef = doc(fireStoreDB, `${service}Posts`, _id);
+    
+            // 문서 데이터 가져오기
+            const docSnapshot = await getDoc(postDocRef);
+            
+            if (docSnapshot.exists()) {
+                // 문서 데이터 추출
+                const postData = docSnapshot.data();
+    
+                // posts 배열이 있다면 사용하고, 그렇지 않으면 빈 배열을 반환
+                const fetchedPosts = postData.posts || [];
+                console.log("게시글 정보 가져옴");
+                setPosts(fetchedPosts);
+            } else {
+                console.log("No such document!");
+                setPosts([]);
+            }
         } catch (error) {
-            console.error("Error fetching documents: ", error);
+            console.error("Error fetching document: ", error);
         }
     };
 
@@ -229,7 +236,7 @@ const WebtoonDetailPage = ({ navigation: { navigate }, route }) => {
             <FlatList
                 data={posts}
                 renderItem={renderItem}
-                keyExtractor={item => item.id}
+                keyExtractor={item => item.date}
                 contentContainerStyle={{ flexGrow: 1, paddingBottom: 10 }}
                 ListHeaderComponent={renderHeader}
                 showsVerticalScrollIndicator={false}

@@ -144,7 +144,7 @@ const CommunityPage = () => {
                 data={listData}
                 ListHeaderComponent={renderHeader}
                 renderItem={({ item }) => <CommunityList {...item} />}
-                keyExtractor={(item, index) => String(index)}
+                keyExtractor={item => item.date}
                 initialNumToRender={4}
                 maxToRenderPerBatch={4}
                 windowSize={2}

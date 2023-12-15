@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Text, View, TouchableOpacity, TextInput, ScrollView, StyleSheet, Alert, Image } from 'react-native';
 import { MaterialCommunityIcons, FontAwesome } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
-import { doc, collection, addDoc } from "firebase/firestore";
+import { doc, updateDoc, arrayUnion, getDoc, setDoc } from "firebase/firestore";
 import { fireStoreDB } from '../../firebaseConfig';
 import { auth } from '../../firebaseConfig';
 import { useNavigation } from '@react-navigation/native';
@@ -13,6 +13,8 @@ const AddCommunity = ({ navigation: { navigate }, route }) => {
     const navigation = useNavigation();
     const [newTitle, setNewTitle] = useState("");
     const [newSubTitle, setNewSubTitle] = useState("");
+
+
 
     const [emotion, setEmotion] = useState(0);
     const [uid, setUid] = useState('');
@@ -71,7 +73,7 @@ const AddCommunity = ({ navigation: { navigate }, route }) => {
         console.log('b')
 
         try {
-        // 이미지를 Blob 형태로 변환
+            // 이미지를 Blob 형태로 변환
             console.log('c')
             if (imageUri) {
                 console.log("변환시작")
@@ -94,30 +96,39 @@ const AddCommunity = ({ navigation: { navigate }, route }) => {
         }
     };
 
+    // 페이지 실행될 때마다 실행하는 함수
+    // 검색페이지에서 넘어왔을때 조건문 처리
     const getWebtoonData = () => {
-        const {
-            _id,
-            title,
-            author,
-            url,
-            img,
-            service,
-            updateDays,
-            fanCount,
-            additional,
-        } = route.params.item;
+        if (route.params?.fromScreen === 'SearchPage') {
+            const {
+                _id,
+                title,
+                author,
+                url,
+                img,
+                service,
+                updateDays,
+                fanCount,
+                additional,
+            } = route.params.item;
 
-        setWebtoonService(service);
-        setWebtoonID(_id);
-        setWebtoonTitle(title);
-        setAuthor(author);
-        setWebtoonImage(img);
+            setWebtoonService(service);
+            setWebtoonID(_id);
+            setWebtoonTitle(title);
+            setAuthor(author);
+            setWebtoonImage(img);
+        } else {
+            setWebtoonService("smallTalk");
+            setWebtoonID("");
+            setWebtoonTitle("");
+            setAuthor("");
+            setWebtoonImage("");
+        }
+
     }
 
     useEffect(() => {
-        if (route.params?.fromScreen === 'SearchPage') {
-            getWebtoonData();
-        }
+        getWebtoonData();
     }, [route.params])
 
     const firebase = {
@@ -132,33 +143,67 @@ const AddCommunity = ({ navigation: { navigate }, route }) => {
         emotion: emotion,
         isDeleted: false,
     }
-    
-const addPost = async () => {
-    try {
-        let today = new Date();
-        let year = today.getFullYear();
-        let month = ('0' + (today.getMonth() + 1)).slice(-2);
-        let day = ('0' + today.getDate()).slice(-2);
-        let dateString = year + '-' + month + '-' + day;
-        console.log(dateString);
 
-        const firebaseImageUrl = await uploadImageToFirebase(selectImageUrl);
+    const addPost = async () => {
+        try {
+            const today = new Date();
+            const dateString = today.toISOString();
+            const firebaseImageUrl = await uploadImageToFirebase(selectImageUrl);
 
-        // 모든 게시물을 'posts' 컬렉션에 저장하되, webtoonService 정보를 추가합니다.
-        const postsCollection = collection(fireStoreDB, `posts/${webtoonService}/posts`);
+            // 웹툰 선택안했을 시 smallTalk임
+            if (webtoonService === 'smallTalk') {
+                // 문서 참조를 가져옵니다.
+                const postDocRef = doc(fireStoreDB, `${webtoonService}Posts`, 'smallTalkPosts');
 
-        const docRef = await addDoc(postsCollection, {
-            ...firebase,
-            imageURL: firebaseImageUrl,
-            date: dateString,
-        });
+                // 새로운 게시물 데이터
+                const newPost = {
+                    ...firebase,
+                    imageURL: firebaseImageUrl,
+                    date: dateString,
+                };
 
-        console.log('저장 완료, 새로운 ID: ', docRef.id);
-        navigation.goBack();
-    } catch (error) {
-        console.error('Error : ', error);
-    }
-};
+                // 게시글 작성(배열에 데이터가 추가되는 형식임)
+                await updateDoc(postDocRef, {
+                    posts: arrayUnion(newPost)
+                });
+
+                console.log('게시물 추가 완료');
+                navigation.goBack();
+            } else {
+                // 문서 참조를 가져옵니다.
+                const postDocRef = doc(fireStoreDB, `${webtoonService}Posts`, webtoonID);
+
+                // 새로운 게시물 데이터
+                const newPost = {
+                    ...firebase,
+                    imageURL: firebaseImageUrl,
+                    date: dateString,
+                };
+
+                // Firestore에서 문서가 있는지 확인합니다.
+                const docSnap = await getDoc(postDocRef);
+
+                if (docSnap.exists()) {
+                    // 문서가 존재하면, 기존 배열에 새 게시물을 추가합니다.
+                    await updateDoc(postDocRef, {
+                        posts: arrayUnion(newPost)
+                    });
+                } else {
+                    // 문서가 존재하지 않으면, 새 문서를 생성하고 배열로 시작합니다.
+                    await setDoc(postDocRef, {
+                        posts: [newPost]
+                    });
+                }
+
+                console.log('게시물 추가 완료');
+                navigation.goBack();
+            }
+
+        } catch (error) {
+            console.error('Error : ', error);
+        }
+    };
+
 
     const handleSaveArray = () => {
         if (newTitle === '' && newSubTitle === '') {

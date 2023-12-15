@@ -11,8 +11,6 @@ const CommunityList = ({ date, title, subTitle,id,webtoonTitle,imageURL,webtoonI
     const navigation = useNavigation();
     const [isIcons, setIsIcons] = useState(false);
     const [count, setCount] = useState("");
-
-    console.log(imageURL)
     const handleDelete = async () => {
         Alert.alert(
             "게시물 삭제",

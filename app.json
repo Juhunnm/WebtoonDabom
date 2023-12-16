@@ -15,8 +15,7 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": false,
-      "bundleIdentifier": "com.webtoondabom"
+      "supportsTablet": true
     },
     "android": {
       "adaptiveIcon": {
@@ -26,11 +25,6 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    },
-    "extra": {
-      "eas": {
-        "projectId": "77ce803b-2520-4413-9fca-246439475276"
-      }
     }
   }
 }

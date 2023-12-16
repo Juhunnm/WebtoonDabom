@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, useCallback, memo } from 'react';
+import React, { useState, useEffect, useContext, useCallback, memo, useRef  } from 'react';
 import {
     View,
     Text,
@@ -101,7 +101,7 @@ const WebtoonList = ({ updateDay, isNaverChecked, isKakaoChecked, isPageChecked 
         });
 
         const blurUnsubscribe = navigation.addListener('blur', () => {
-            setWebtoons([]); // 탭이 비활성화될 때 데이터 초기화
+            setWebtoons([]);
         });
 
         // 초기 로드 시 데이터 가져오기
@@ -113,7 +113,8 @@ const WebtoonList = ({ updateDay, isNaverChecked, isKakaoChecked, isPageChecked 
             focusUnsubscribe();
             blurUnsubscribe();
         };
-    }, [loadingFinished, navigation, updateDay, isNaverChecked, isKakaoChecked, isPageChecked]);
+    }, [loadingFinished, updateDay, isNaverChecked, isKakaoChecked, isPageChecked]);
+
 
     const renderItem = useCallback(({ item }) =>
         <WebtoonListItem

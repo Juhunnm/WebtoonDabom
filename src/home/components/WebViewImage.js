@@ -7,7 +7,7 @@ const WINDOW_HEIGHT = Dimensions.get('window').height;
 const ITEM_SIZE = WINDOW_HEIGHT * 0.17;
 
  
-const WebViewImage = memo(({ imageURL, isSearch }) => {
+const WebViewImage = memo(({ imageURL, isSearch, isCommunity }) => {
     const webViewStyles = {
         width: ITEM_SIZE * 0.7,
         height: ITEM_SIZE * 0.9,
@@ -18,6 +18,12 @@ const WebViewImage = memo(({ imageURL, isSearch }) => {
         width: ITEM_SIZE,
         borderRadius: ITEM_SIZE * 0.045,
     };
+
+    const communityWebViewStyles = {
+        width: WINDOW_HEIGHT * 0.077,
+        height: WINDOW_HEIGHT * 0.1,
+        borderRadius: WINDOW_HEIGHT * 0.0045,
+    }
 
     const htmlContent = `
         <html>
@@ -48,7 +54,11 @@ const WebViewImage = memo(({ imageURL, isSearch }) => {
     return (
         <View style={isSearch && { height: ITEM_SIZE * 1.3 }}>
             <WebView
-                style={ isSearch ? searchWebViewStyles : webViewStyles}
+                style={(()=>{
+                    if(isSearch) return searchWebViewStyles;
+                    else if(isCommunity) return communityWebViewStyles;
+                    else return (webViewStyles)
+                })()}
                 source={{ html: htmlContent }}
                 originWhitelist={['*']}
                 scrollEnabled={false}

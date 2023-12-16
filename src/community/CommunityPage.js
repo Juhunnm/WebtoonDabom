@@ -34,29 +34,39 @@ const CommunityPage = () => {
             spinner.start();
             let allPosts = [];
             if (selectedService === 'All') {
+                // 게시글 전부 가져오는 코든데 최적화가 무조건 필요함
+                // 현재 방식은 잡담 다가져오고, 네이버 다가져오고, 카카오 ... 방식임
+                // 효율이 미친듯이 떨어짐
+                // 플랫폼별로 한개씩 게시글을 들고오고 스크롤 끝까지 내리면 또 한개씩 들고오는 방식 괜찮아보임
                 const services = ['smallTalk', 'naver', 'kakao', 'kakaoPage'];
 
                 for (const service of services) {
                     const querySnapshot = await getDocs(collection(fireStoreDB, `${service}Posts`));
-                    // 만약 service가 naver이면 
-                    // naverPosts안에 있는
-                    // 모든 문서(webtoonID값)안에 
-                    // posts값을 모두 가져오는 코드
-                    querySnapshot.forEach(doc => {
-                        const postsInDoc = doc.data().posts || [];
-                        allPosts = allPosts.concat(postsInDoc);
-                    });
+                    for (const doc of querySnapshot.docs) {
+                        const postsCollectionRef = collection(fireStoreDB, `${service}Posts/${doc.id}/posts`);
+                        const postsSnapshot = await getDocs(postsCollectionRef);
+                        postsSnapshot.forEach(postDoc => {
+                            allPosts.push({ id: postDoc.id, ...postDoc.data() });
+                        });
+                    }
                 }
             } else {
-                const querySnapshot = await getDocs(collection(fireStoreDB, `${selectedService}Posts`));
-
-                querySnapshot.forEach(doc => {
-                    const postsInDoc = doc.data().posts || [];
-                    allPosts = allPosts.concat(postsInDoc);
-                });
+                // 물론 여기도 플랫폼에서 데이터 긁어올때 7개 정도씩 긁어오고 스크롤 끝까지 내렸을때
+                // 추가로 들고오도록 수정필요할것 같음
+                const servicePostsCollectionRef = collection(fireStoreDB, `${selectedService}Posts`);
+                const querySnapshot = await getDocs(servicePostsCollectionRef);
+                // 이 반복문 문법은 
+                // 파이썬의 for 변수 in 리스트: 과 같음
+                for (const doc of querySnapshot.docs) {
+                    const postsCollectionRef = collection(fireStoreDB, `${selectedService}Posts/${doc.id}/posts`);
+                    const postsSnapshot = await getDocs(postsCollectionRef);
+                    postsSnapshot.forEach(postDoc => {
+                        allPosts.push({ id: postDoc.id, ...postDoc.data() });
+                    });
+                }
             }
 
-            // 게시글을 date 필드를 기준으로 내림차순 정렬합니다.
+            // 게시글을 date 필드를 기준으로 내림차순 정렬
             allPosts.sort((a, b) => b.date.localeCompare(a.date));
 
             console.log(`데이터: `, allPosts);

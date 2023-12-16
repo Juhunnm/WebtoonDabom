@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Text, View, TouchableOpacity, TextInput, ScrollView, StyleSheet, Alert, Image } from 'react-native';
 import { MaterialCommunityIcons, FontAwesome } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
-import { doc, updateDoc, arrayUnion, getDoc, setDoc } from "firebase/firestore";
+import { doc, collection, getDoc, updateDoc, setDoc, addDoc } from "firebase/firestore";
 import { fireStoreDB } from '../../firebaseConfig';
 import { auth } from '../../firebaseConfig';
 import { useNavigation } from '@react-navigation/native';
@@ -119,7 +119,7 @@ const AddCommunity = ({ navigation: { navigate }, route }) => {
             setWebtoonImage(img);
         } else {
             setWebtoonService("smallTalk");
-            setWebtoonID("");
+            setWebtoonID("smallTalks");
             setWebtoonTitle("");
             setAuthor("");
             setWebtoonImage("");
@@ -135,6 +135,7 @@ const AddCommunity = ({ navigation: { navigate }, route }) => {
         title: newTitle,
         subTitle: newSubTitle,
         webtoonID: webtoonID,
+        service: webtoonService,
         webtoonImage: webtoonImage,
         webtoonTitle: webtoonTitle,
         autor: author,
@@ -150,55 +151,26 @@ const AddCommunity = ({ navigation: { navigate }, route }) => {
             const dateString = today.toISOString();
             const firebaseImageUrl = await uploadImageToFirebase(selectImageUrl);
 
-            // 웹툰 선택안했을 시 smallTalk임
-            if (webtoonService === 'smallTalk') {
-                // 문서 참조를 가져옵니다.
-                const postDocRef = doc(fireStoreDB, `${webtoonService}Posts`, 'smallTalkPosts');
+            // 웹툰ID별로 posts컬렉션 지정할떄 필드에 값이 없으면 인식을 못해서
+            // 웹툰 제목을 필드에 임의로 추가함.
+            // 값을 test: 123 이런식으로 넣어도 무관하긴 함(그냥 구분하려고 웹툰 제목 넣음)
+            const webtoonDocRef = doc(fireStoreDB, `${webtoonService}Posts`, webtoonID);
+            await setDoc(webtoonDocRef, {
+                webtoonTitle: webtoonTitle 
+            });
 
-                // 새로운 게시물 데이터
-                const newPost = {
-                    ...firebase,
-                    imageURL: firebaseImageUrl,
-                    date: dateString,
-                };
 
-                // 게시글 작성(배열에 데이터가 추가되는 형식임)
-                await updateDoc(postDocRef, {
-                    posts: arrayUnion(newPost)
-                });
+            // 플랫폼Posts -> 웹툰ID -> posts컬렉션 지정
+            const postsCollection = collection(fireStoreDB, `${webtoonService}Posts/${webtoonID}/posts`);
+            // 위에서 지정한 컬렉션에 문서 추가(게시글 데이터)
+            const docRef = await addDoc(postsCollection, {
+                ...firebase,
+                imageURL: firebaseImageUrl,
+                date: dateString,
+            });
 
-                console.log('게시물 추가 완료');
-                navigation.goBack();
-            } else {
-                // 문서 참조를 가져옵니다.
-                const postDocRef = doc(fireStoreDB, `${webtoonService}Posts`, webtoonID);
-
-                // 새로운 게시물 데이터
-                const newPost = {
-                    ...firebase,
-                    imageURL: firebaseImageUrl,
-                    date: dateString,
-                };
-
-                // Firestore에서 문서가 있는지 확인합니다.
-                const docSnap = await getDoc(postDocRef);
-
-                if (docSnap.exists()) {
-                    // 문서가 존재하면, 기존 배열에 새 게시물을 추가합니다.
-                    await updateDoc(postDocRef, {
-                        posts: arrayUnion(newPost)
-                    });
-                } else {
-                    // 문서가 존재하지 않으면, 새 문서를 생성하고 배열로 시작합니다.
-                    await setDoc(postDocRef, {
-                        posts: [newPost]
-                    });
-                }
-
-                console.log('게시물 추가 완료');
-                navigation.goBack();
-            }
-
+            console.log('저장 완료, 새로운 ID: ', docRef.id);
+            navigation.goBack();
         } catch (error) {
             console.error('Error : ', error);
         }

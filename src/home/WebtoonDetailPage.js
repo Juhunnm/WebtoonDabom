@@ -69,13 +69,13 @@ const WebtoonDetailPage = ({ navigation: { navigate }, route }) => {
             if (bookmarks) {
                 const bookmarkArray = JSON.parse(bookmarks);
                 if (bookmarkArray.some(webtoon => webtoon._id === _id)) {
-                    console.log("즐겨찾기 되어있는 웹툰: " + title);
+                    //console.log("즐겨찾기 되어있는 웹툰: " + title);
                     setIsBookMark(true);
                 } else {
-                    console.log("즐겨찾기 안됨: " + title);
+                    //console.log("즐겨찾기 안됨: " + title);
                 }
             } else {
-                console.log("즐겨찾기 되어있는 웹툰이 하나도 없음");
+                //console.log("즐겨찾기 되어있는 웹툰이 하나도 없음");
             }
         } catch (error) {
             console.error('AsyncStorage error:', error);
@@ -97,12 +97,12 @@ const WebtoonDetailPage = ({ navigation: { navigate }, route }) => {
 
             if (!isBookMark) {
                 bookmarkArray = [...bookmarkArray, route.params];
-                console.log("즐겨찾기 추가: " + title);
+                //console.log("즐겨찾기 추가: " + title);
             } else {
                 bookmarkArray = bookmarkArray.filter(webtoon => webtoon._id !== _id);
-                console.log("즐겨찾기 제거: " + title);
+                //console.log("즐겨찾기 제거: " + title);
             }
-            console.log('즐찾 버튼 클릭')
+            //console.log('즐찾 버튼 클릭')
             setIsBookMark(!isBookMark);
 
             await AsyncStorage.setItem('bookMark', JSON.stringify(bookmarkArray));
@@ -136,10 +136,10 @@ const WebtoonDetailPage = ({ navigation: { navigate }, route }) => {
             }));
             
             if (fetchedPosts.length > 0) {
-                console.log("게시글 정보 가져옴");
+                //console.log("게시글 정보 가져옴");
                 setPosts(fetchedPosts);
             } else {
-                console.log("게시글이 없습니다.");
+                //console.log("게시글이 없습니다.");
                 setPosts([]);
             }
         } catch (error) {

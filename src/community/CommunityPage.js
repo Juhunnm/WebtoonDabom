@@ -163,7 +163,7 @@ const CommunityPage = () => {
             />
             {/* 글쓰기 버튼 */}
             <TouchableOpacity style={styles.createButton} onPress={handleAddList}>
-                <Text style={{ fontWeight: 'bold', fontSize: 20 }}>+</Text>
+                <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 20 }}>+</Text>
             </TouchableOpacity>
         </View>
     );
@@ -173,8 +173,8 @@ const styles = StyleSheet.create({
     container: {
         backgroundColor: 'white',
         flex: 1,
-        paddingHorizontal: 10,
-        paddingTop: 10,
+        paddingHorizontal: 5,
+        paddingTop: 5,
     },
     searchBar: {
         flexDirection: 'row',
@@ -195,23 +195,23 @@ const styles = StyleSheet.create({
         height: WINDOW_HEIGHT * 0.05,
     },
     serviceButton: {
-        backgroundColor: '#B7B7B7',
+        backgroundColor: '#818FB4',
         padding: 10,
         borderRadius: '100%',
     },
     selectedServiceButton: {
-        backgroundColor: '#585858',
+        backgroundColor: '#363062',
     },
     serviceButtonText: {
         color: 'white',
     },
     createButton: {
-        backgroundColor: '#d3d3d3',
+        backgroundColor: '#363062',
         width: 60,
         height: 60,
         borderRadius: 30,
         borderWidth: 2,
-        borderColor: 'black',
+        borderColor: 'white',
         alignItems: 'center',
         justifyContent: 'center',
         position: 'absolute',

@@ -1,27 +1,42 @@
 import React, { useState,useEffect } from 'react';
-import { Text, View, StyleSheet, ScrollView, TouchableOpacity, TextInput, Button,Image } from 'react-native';
+import { Text, View, StyleSheet, ScrollView, TouchableOpacity, TextInput, Button,Image, Alert } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { getDocs, collection, addDoc } from "firebase/firestore";
+import { auth } from '../../firebaseConfig';
 import { fireStoreDB } from '../../firebaseConfig';
 
 const DetailedCommunityPage = ({ route }) => {
-  const { title, subTitle, id,webtoonTitle,imageURL,webtoonImage,autor } = route.params;
+  const { title, subTitle, id,webtoonTitle,imageURL,webtoonImage,autor,webtoonID,service } = route.params;
 
   // 댓글을 저장할 상태를 생성
   const [comments, setComments] = useState([]);
   const [commentInput, setCommentInput] = useState('');
 
+  
 
   // 댓글 작성 함수
   const handleAddComment = async () => {
     // 입력값이 없으면 리턴
     if (!commentInput) return;
 
+    // 현재 로그인 정보 가져오는 코드
+    const user = auth.currentUser; // 로그인 안되어 있으면 null반환
+    if(!user){
+      Alert.alert("로그인을 해주세요.");
+      // TODO: 로그인 페이지로 넘어가는 로직 추가필요
+      return;
+    }
+    const displayName = user.displayName; // 현재 로그인 되어 있는 유저 닉네임
+    const uid = user.uid; // 현재 로그인 되어 있는 유저 uid
+
     // Firebase에 댓글 저장
-    const commentsCollection = collection(fireStoreDB, `posts/${id}/comments`);
+    const commentsCollection = collection(fireStoreDB, `${service}Posts/${webtoonID}/posts/${id}/comments`);
     await addDoc(commentsCollection, { 
+      displayName: displayName,
       comment: commentInput,
+      uid: uid,
+      date: new Date().toLocaleString(),
     });
 
     setCommentInput(''); // 입력창 초기화
@@ -31,7 +46,7 @@ const DetailedCommunityPage = ({ route }) => {
 
   // 댓글을 불러오는 함수
   const fetchComments = async () => {
-    const commentsCollection = collection(fireStoreDB, `posts/${id}/comments`);
+    const commentsCollection = collection(fireStoreDB, `${service}Posts/${webtoonID}/posts/${id}/comments`);
     const commentSnap = await getDocs(commentsCollection);
     const comments = commentSnap.docs.map(doc => doc.data().comment);
     setComments(comments);

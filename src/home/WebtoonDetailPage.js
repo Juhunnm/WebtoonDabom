@@ -13,7 +13,7 @@ import WebViewImage from './components/WebViewImage';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CommunityList from '../community/components/CommunutyList';
 import { fireStoreDB } from '../../firebaseConfig';
-import { collection, query, where, getDoc, orderBy, doc } from "firebase/firestore";
+import { collection, query, getDocs, where, getDoc, orderBy, doc } from "firebase/firestore";
 
 
 import { Image } from "react-native-expo-image-cache";
@@ -123,26 +123,28 @@ const WebtoonDetailPage = ({ navigation: { navigate }, route }) => {
 
     const fetchDocs = async () => {
         try {
-            // 문서 참조 생성
-            const postDocRef = doc(fireStoreDB, `${service}Posts`, _id);
-    
-            // 문서 데이터 가져오기
-            const docSnapshot = await getDoc(postDocRef);
+            // 웹툰별 posts 컬렉션 참조 생성
+            const postsCollectionRef = collection(fireStoreDB, `${service}Posts/${_id}/posts`);
             
-            if (docSnapshot.exists()) {
-                // 문서 데이터 추출
-                const postData = docSnapshot.data();
-    
-                // posts 배열이 있다면 사용하고, 그렇지 않으면 빈 배열을 반환
-                const fetchedPosts = postData.posts || [];
+            // posts 컬렉션의 문서들을 가져옴
+            const querySnapshot = await getDocs(postsCollectionRef);
+            
+            // 문서 데이터를 배열로 변환
+            const fetchedPosts = querySnapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data()
+            }));
+            
+            if (fetchedPosts.length > 0) {
                 console.log("게시글 정보 가져옴");
                 setPosts(fetchedPosts);
             } else {
-                console.log("No such document!");
+                console.log("게시글이 없습니다.");
                 setPosts([]);
             }
         } catch (error) {
-            console.error("Error fetching document: ", error);
+            console.error("Error fetching posts: ", error);
+            setPosts([]);
         }
     };
 
@@ -156,7 +158,7 @@ const WebtoonDetailPage = ({ navigation: { navigate }, route }) => {
 
 
     const renderItem = ({ item }) => (
-        <CommunityList title={item.title} subTitle={item.subTitle} />
+        <CommunityList {...item} />
     );
 
     const renderEmptyComponent = () => (

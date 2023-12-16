@@ -6,7 +6,7 @@ import { fireStoreDB } from '../../../firebaseConfig';
 import { doc, updateDoc, increment, deleteDoc } from 'firebase/firestore';
 
 
-const CommunityList = ({ date, title, subTitle,id,webtoonTitle,imageURL,webtoonImage,autor}) => {
+const CommunityList = ({ date, title, subTitle,id,webtoonTitle,imageURL,webtoonImage,autor,service,webtoonID}) => {
 
     const navigation = useNavigation();
     const [isIcons, setIsIcons] = useState(false);
@@ -42,7 +42,7 @@ const CommunityList = ({ date, title, subTitle,id,webtoonTitle,imageURL,webtoonI
     };
 
     const handleMove = () => {
-        navigation.navigate("DetailedCommunityPage", { title, subTitle ,id,webtoonTitle,imageURL,webtoonImage,autor});
+        navigation.navigate("DetailedCommunityPage", { title, subTitle ,id,webtoonTitle,imageURL,webtoonImage,autor,service,webtoonID});
     }
 
     return (

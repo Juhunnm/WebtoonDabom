@@ -76,7 +76,7 @@ const SearchPage = ({ navigation: { navigate }, route }) => {
         navigation.setOptions({
             headerTitle: () => (
                 <TextInput
-                    placeholder="웹툰 검색"
+                    placeholder="웹툰 제목, 작가 이름 검색"
                     style={styles.searchInput}
                     onChangeText={setSearchQuery}
                     returnKeyType="search"

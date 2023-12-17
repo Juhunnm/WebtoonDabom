@@ -134,10 +134,11 @@ const CommunityPage = () => {
     // );
 
     return (
-        <View style={styles.container}>
+        <>
             {loading && <LoadingSpinner />}
-            {/* 커뮤니티 검색은 일단 주석처리함. 필요하면 추가하세용 */}
-            {/* <View style={styles.searchBar}>
+            <View style={styles.container}>
+                {/* 커뮤니티 검색은 일단 주석처리함. 필요하면 추가하세용 */}
+                {/* <View style={styles.searchBar}>
                 <TextInput
                     style={styles.input}
                     placeholder="커뮤니티 검색"
@@ -148,24 +149,25 @@ const CommunityPage = () => {
                 <FontAwesome name="search" size={24} color="black" />
             </View> */}
 
-            <FlatList
-                style={{ backgroundColor: '#fff' }}
-                contentContainerStyle={{ flexGrow: 1 }}
-                data={listData}
-                ListHeaderComponent={renderHeader}
-                renderItem={({ item }) => <CommunityList {...item} />}
-                keyExtractor={item => item.date}
-                initialNumToRender={4}
-                maxToRenderPerBatch={4}
-                windowSize={2}
-                removeClippedSubviews={true}
-                ListEmptyComponent={renderEmptyComponent}
-            />
-            {/* 글쓰기 버튼 */}
-            <TouchableOpacity style={styles.createButton} onPress={handleAddList}>
-                <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 20 }}>+</Text>
-            </TouchableOpacity>
-        </View>
+                <FlatList
+                    style={{ backgroundColor: '#fff' }}
+                    contentContainerStyle={{ flexGrow: 1 }}
+                    data={listData}
+                    ListHeaderComponent={renderHeader}
+                    renderItem={({ item }) => <CommunityList {...item} />}
+                    keyExtractor={item => item.date}
+                    initialNumToRender={4}
+                    maxToRenderPerBatch={4}
+                    windowSize={2}
+                    removeClippedSubviews={true}
+                    ListEmptyComponent={renderEmptyComponent}
+                />
+                {/* 글쓰기 버튼 */}
+                <TouchableOpacity style={styles.createButton} onPress={handleAddList}>
+                    <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 20 }}>+</Text>
+                </TouchableOpacity>
+            </View>
+        </>
     );
 };
 

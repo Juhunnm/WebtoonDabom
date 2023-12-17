@@ -70,7 +70,7 @@ const WebtoonList = ({ updateDay, isNaverChecked, isKakaoChecked, isPageChecked 
     const [webtoons, setWebtoons] = useState([]);
 
     // api요청 로딩 끝남 감지
-    const { loadingFinished } = useContext(LoadingContext);
+    const { loading } = useContext(LoadingContext);
 
     const getWebtoonsByCondition = async (update) => {
         try {
@@ -105,7 +105,7 @@ const WebtoonList = ({ updateDay, isNaverChecked, isKakaoChecked, isPageChecked 
         });
 
         // 초기 로드 시 데이터 가져오기
-        if (loadingFinished) {
+        if (!loading) {
             getWebtoonsByCondition(updateDay);
         }
 
@@ -113,7 +113,7 @@ const WebtoonList = ({ updateDay, isNaverChecked, isKakaoChecked, isPageChecked 
             focusUnsubscribe();
             blurUnsubscribe();
         };
-    }, [loadingFinished, updateDay, isNaverChecked, isKakaoChecked, isPageChecked]);
+    }, [loading, updateDay, isNaverChecked, isKakaoChecked, isPageChecked]);
 
 
     const renderItem = useCallback(({ item }) =>

@@ -156,7 +156,7 @@ const AddCommunity = ({ navigation: { navigate }, route }) => {
             // 값을 test: 123 이런식으로 넣어도 무관하긴 함(그냥 구분하려고 웹툰 제목 넣음)
             const webtoonDocRef = doc(fireStoreDB, `${webtoonService}Posts`, webtoonID);
             await setDoc(webtoonDocRef, {
-                webtoonTitle: webtoonTitle 
+                webtoonTitle: webtoonTitle
             });
             //불러오기위해서
 
@@ -213,20 +213,24 @@ const AddCommunity = ({ navigation: { navigate }, route }) => {
                     numberOfLines={10}
                     style={{ flex: 1 }}
                 />
-                <View style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
-                    <TouchableOpacity onPress={handleSelWebtoon}>
-                        <MaterialCommunityIcons name="pound" size={24} color="white" />
-                    </TouchableOpacity>
+                <View style={styles.upload}>
+                    <View style={styles.iconTextRow}>
+                        <TouchableOpacity onPress={handleSelWebtoon} style={styles.iconTextContainer}>
+                            <MaterialCommunityIcons name="pound" size={24} color="white" />
+                            <Text style={styles.iconText}>리뷰할 웹툰 선택</Text>
+                        </TouchableOpacity>
+                    </View>
                     <Text style={{ marginLeft: 5, color: 'white' }}>{webtoonTitle}</Text>
                     <TouchableOpacity
                         onPress={uploadImage}
                     >
                         <FontAwesome name="image" size={24} color="white" />
                     </TouchableOpacity>
-                    <Image
-                        source={selectImageUrl ? { uri: selectImageUrl } : require('../../img/DefaultProfile.png')}
-                        style={{ height: 100, width: 100 }}
-                    />
+                    {selectImageUrl &&
+                        <Image
+                            source={{ uri: selectImageUrl }}
+                            style={{ height: 100, width: 100 }}
+                        />}
                 </View>
             </View>
 
@@ -250,15 +254,16 @@ const styles = StyleSheet.create({
     TitleInput: {
         flexDirection: 'row',
         backgroundColor: '#435585',
-        height: 40,
+        height: 50,
         marginTop: 10,
         borderRadius: 10,
-        paddingLeft: 10,
-        paddingRight: 10,
+        padding: 10,
         color: 'white'
     },
     textInput: {
         height: '50%',
+        width: '100%',
+        flexDirection: 'column',
     },
     button: {
         backgroundColor: '#818FB4',
@@ -267,6 +272,25 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         flexDirection: 'row',
         justifyContent: 'flex-end',
+    },
+    upload: {
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
+        alignItems: 'flex-end',
+
+    },
+    iconTextRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginRight: 10,
+    },
+    iconTextContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    iconText: {
+        marginLeft: 5,
+        color: 'white',
     },
 });
 

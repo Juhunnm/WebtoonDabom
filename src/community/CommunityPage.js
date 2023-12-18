@@ -68,7 +68,7 @@ const CommunityPage = () => {
 
             // 게시글을 date 필드를 기준으로 내림차순 정렬
             allPosts.sort((a, b) => b.date.localeCompare(a.date));
-
+            //찾아봐야겠다
             console.log(`데이터: `, allPosts);
             setListData(allPosts);
         } catch (error) {
@@ -99,9 +99,10 @@ const CommunityPage = () => {
     const renderHeader = () => (
         <View style={styles.serviceButtonContainer} >
             <ScrollView
-                horizontal={true}
+                horizontal={true}//가로슬라이드
                 style={{ backgroundColor: '#fff' }}
                 showsHorizontalScrollIndicator={false}>
+                {/* 스크롤바 없앰 */}
                 <View style={styles.categoryList}>
                     {['All', 'smallTalk', 'naver', 'kakao', 'kakaoPage'].map((service) => (
                         <TouchableOpacity
@@ -151,16 +152,24 @@ const CommunityPage = () => {
 
                 <FlatList
                     style={{ backgroundColor: '#fff' }}
-                    contentContainerStyle={{ flexGrow: 1 }}
-                    data={listData}
+                    contentContainerStyle={{ flexGrow: 1 }}//화면을 꽉차게
+                    data={listData}//map함수
                     ListHeaderComponent={renderHeader}
+                    // 위에다가 렌더링
                     renderItem={({ item }) => <CommunityList {...item} />}
+                    // 
                     keyExtractor={item => item.date}
+                    // 키값을 줌
                     initialNumToRender={4}
+                    //맨처음 시작할때 4개 실행먼저
                     maxToRenderPerBatch={4}
+                    //화면에 띄울 갯수
                     windowSize={2}
+                    //화면 밖에 얼마큼 렌더링할껀가
                     removeClippedSubviews={true}
+                    //flase를 주면 지우지 않는다.
                     ListEmptyComponent={renderEmptyComponent}
+                    //아무것도 없을때는
                 />
                 {/* 글쓰기 버튼 */}
                 <TouchableOpacity style={styles.createButton} onPress={handleAddList}>

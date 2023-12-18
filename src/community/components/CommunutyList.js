@@ -8,7 +8,7 @@ import { auth } from '../../../firebaseConfig';
 import WebViewImage from '../../home/components/WebViewImage';
 import { Image } from "react-native-expo-image-cache"; // 이미지 효율 높이는 라이브러리
 import { formatDistanceToNow, parseISO } from 'date-fns'; // 시간 편차 구하는 라이브러리 임포트
-import { ko } from 'date-fns/locale'; // 시간 편차 구하는 라이브러리 한국어 locale
+import { ko } from 'date-fns/locale'; // 시간 편차 구하는 라이브러리 한국어 locale age mini
 
 const WINDOW_HEIGHT = Dimensions.get('window').height;
 
@@ -21,9 +21,9 @@ const CommunityList = ({ date, title, subTitle, id, webtoonTitle, imageURL, webt
     const [count, setCount] = useState(0);
     const user = auth.currentUser;
 
-    const dateObject = parseISO(date);
+    const dateObject = parseISO(date);//날자 데이터 형식변환
 
-    const timeAgo = formatDistanceToNow(dateObject, { addSuffix: true, locale: ko });
+    const timeAgo = formatDistanceToNow(dateObject, { addSuffix: true, locale: ko }); //날짜 편차 구하기
 
     const handleDelete = async () => {
         Alert.alert(
@@ -51,8 +51,8 @@ const CommunityList = ({ date, title, subTitle, id, webtoonTitle, imageURL, webt
         //     emotion: increment(1)
         // });
         // console.log(date);
-        // setIsIcons(!isIcons);
-        // setCount(prevCount => isIcons ? prevCount - 1 : prevCount + 1);
+        setIsIcons(!isIcons);
+        setCount(prevCount => isIcons ? prevCount - 1 : prevCount + 1);
     };
 
     const handleMove = () => {
@@ -63,7 +63,8 @@ const CommunityList = ({ date, title, subTitle, id, webtoonTitle, imageURL, webt
         <View style={styles.communityListContainer}>
 
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', height: 30, alignItems: 'flex-end' }}>
-                <Text style={styles.title} numberOfLines={1} ellipsizeMode='tail'>{title}</Text>
+                <Text style={styles.title} numberOfLines={1} ellipsizeMode='tail'>{title}</Text> 
+                {/* 2줄넘어가면 짤려간다. 60%넘어가면 짤린다.style 에따라서 tail로 하면 ...으로짤린다. */}
                 <Text style={styles.date}>{timeAgo}</Text>
             </View>
             <View style={styles.subTitle}>
@@ -97,10 +98,16 @@ const CommunityList = ({ date, title, subTitle, id, webtoonTitle, imageURL, webt
                             />
                         )
                         else if (service === 'naver') return (<WebViewImage imageURL={webtoonImage} isCommunity={true} />)
+                        // 
                     })()}
+                    {/* 스페인 비투인 써서 두개는 위에 나머지는 아래로
+                    
+                    */}
                     <View style={styles.textContainer}>
                         <View style={{ gap: 3 }}>
                             <Text style={styles.itemName}>{webtoonTitle}</Text>
+                            {/* 요소들의 사이 간격을 조절해준다. 3씩
+                             */}
                             <Text style={styles.itemText}>{autor}</Text>
                         </View>
 
@@ -126,7 +133,7 @@ const CommunityList = ({ date, title, subTitle, id, webtoonTitle, imageURL, webt
                         style={styles.iconContainer}
                         onPress={handleIcon}>
                         {isIcons ? (
-                            <MaterialCommunityIcons name="cards-heart" size={24} color={"black"} />
+                            <MaterialCommunityIcons name="cards-heart" size={24} color={"red"} />
                         ) : (
                             <MaterialCommunityIcons name="cards-heart-outline" size={24} color={"white"} />
                         )}

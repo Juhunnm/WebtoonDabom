@@ -158,6 +158,7 @@ const AddCommunity = ({ navigation: { navigate }, route }) => {
             await setDoc(webtoonDocRef, {
                 webtoonTitle: webtoonTitle 
             });
+            //불러오기위해서
 
 
             // 플랫폼Posts -> 웹툰ID -> posts컬렉션 지정
@@ -248,7 +249,7 @@ const styles = StyleSheet.create({
     },
     TitleInput: {
         flexDirection: 'row',
-        backgroundColor: '#6a6a6a',
+        backgroundColor: '#435585',
         height: 40,
         marginTop: 10,
         borderRadius: 10,
@@ -260,7 +261,7 @@ const styles = StyleSheet.create({
         height: '50%',
     },
     button: {
-        backgroundColor: 'black',
+        backgroundColor: '#818FB4',
         marginTop: 10,
         padding: 10,
         borderRadius: 10,

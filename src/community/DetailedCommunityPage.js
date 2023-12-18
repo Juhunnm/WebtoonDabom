@@ -5,6 +5,7 @@ import { useNavigation } from '@react-navigation/native';
 import { getDocs, collection, addDoc } from "firebase/firestore";
 import { auth } from '../../firebaseConfig';
 import { fireStoreDB } from '../../firebaseConfig';
+import WebViewImage from '../home/components/WebViewImage';
 
 const DetailedCommunityPage = ({ route }) => {
   const { title, subTitle, id,webtoonTitle,imageURL,webtoonImage,autor,webtoonID,service } = route.params;
@@ -56,6 +57,17 @@ const DetailedCommunityPage = ({ route }) => {
     fetchComments(); // 컴포넌트가 마운트될 때 댓글을 불러옵니다
   }, [comments]);
 
+  const renderWebtoonImage = () => {
+      if (service === 'kakaoPage') {
+        return <Image source={{ uri: "https:" + webtoonImage }} style={styles.image} />;
+      } else if (service === 'kakao') {
+        return <Image source={{ uri: webtoonImage }} style={styles.image} />;
+      } else if(service ==='naver') {
+        return <WebViewImage imageURL={webtoonImage} style={styles.image} />
+    }else{
+      return null;
+    }
+  }
   return (
     <View style={styles.main}>
       <ScrollView style={styles.communityContainer}>
@@ -75,7 +87,7 @@ const DetailedCommunityPage = ({ route }) => {
           <Text style={{ marginLeft: 5, color: 'white' }}>{webtoonTitle}</Text>
         </View>
         <View style ={styles.imageContainerLeft}>
-          <Image source={{ uri: 'https:' + webtoonImage }} style={styles.image} />
+        {renderWebtoonImage()}
           <Text style={styles.autorText}>{autor}</Text>
         </View>
       </ScrollView>
@@ -100,14 +112,14 @@ const DetailedCommunityPage = ({ route }) => {
 const styles = StyleSheet.create({
   main: {
     flex: 1,
-    backgroundColor: 'white',
+    backgroundColor: '#435585',
     padding: 20,
     justifyContent: 'space-between', 
   },
   communityContainer: {
     flex: 1,
     padding: 10,
-    backgroundColor: '#858585',
+    backgroundColor: '#435585',
     borderRadius: 10,
     marginBottom: 10,
   },
@@ -116,7 +128,7 @@ const styles = StyleSheet.create({
     color: 'white',
   },
   subTitle: {
-    backgroundColor: '#CACACA',
+    backgroundColor: '#818FB4',
     marginVertical: 10,
     borderRadius: 10,
     padding: 10,
@@ -155,9 +167,10 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start', // 이미지 컨테이너를 왼쪽으로 정렬
   },
   image: {
-    width: 200, // 이미지의 너비 조정 (예: 200)
+    width: '100%', // 이미지의 너비 조정 (예: 200)
     height: 200, // 이미지의 높이 설정 (예: 200)
     resizeMode: 'contain', // 이미지 비율 유지
+    borderRadius : 10,
   },
   autorText: {
     marginLeft: 10, // 이미지와의 간격

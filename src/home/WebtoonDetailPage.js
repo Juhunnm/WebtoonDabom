@@ -8,13 +8,18 @@ import {
     TouchableOpacity,
     RefreshControl,
     FlatList,
+    Alert,
 } from 'react-native'
 import WebViewImage from './components/WebViewImage';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CommunityList from '../community/components/CommunutyList';
+
+import { auth } from '../../firebaseConfig';
+
 import { fireStoreDB } from '../../firebaseConfig';
 import { collection, query, getDocs, where, getDoc, orderBy, doc } from "firebase/firestore";
 
+import { useNavigation } from '@react-navigation/native';
 
 import { Image } from "react-native-expo-image-cache";
 
@@ -44,6 +49,8 @@ const convertDaysToKorean = (days) => {
 
 
 const WebtoonDetailPage = ({ navigation: { navigate }, route }) => {
+    const navigation = useNavigation();
+    const user = auth.currentUser;
     // 웹툰 데이터 구조 분해
     const {
         _id,
@@ -80,6 +87,27 @@ const WebtoonDetailPage = ({ navigation: { navigate }, route }) => {
         } catch (error) {
             console.error('AsyncStorage error:', error);
         }
+    };
+
+    const handleLoginAsk = () => {
+        Alert.alert(
+            "로그인 안됨",
+            "로그인을 하러 가시겠습니까?",
+            [
+                {
+                    text: "취소",
+                    style: "cancel"
+                },
+                {
+                    text: "이동",
+                    onPress: async () => {
+                        navigation.navigate('Home', {
+                            screen: '프로필',
+                          });
+                    }
+                }
+            ]
+        );
     };
 
     // 현재 웹툰이 즐찾이 되어있는지 확인
@@ -125,16 +153,16 @@ const WebtoonDetailPage = ({ navigation: { navigate }, route }) => {
         try {
             // 웹툰별 posts 컬렉션 참조 생성
             const postsCollectionRef = collection(fireStoreDB, `${service}Posts/${_id}/posts`);
-            
+
             // posts 컬렉션의 문서들을 가져옴
             const querySnapshot = await getDocs(postsCollectionRef);
-            
+
             // 문서 데이터를 배열로 변환
             const fetchedPosts = querySnapshot.docs.map(doc => ({
                 id: doc.id,
                 ...doc.data()
             }));
-            
+
             if (fetchedPosts.length > 0) {
                 //console.log("게시글 정보 가져옴");
                 setPosts(fetchedPosts);
@@ -228,13 +256,28 @@ const WebtoonDetailPage = ({ navigation: { navigate }, route }) => {
                 onPress={handleGoWebtoon}>
                 <Text style={styles.webtoonButtonText}>웹툰 보러가기</Text>
             </TouchableOpacity>
-            <Text style={{ fontSize: TEXT_HEADER, fontWeight: 'bold', marginVertical: 15 }}>커뮤니티</Text>
+            <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginVertical: 15 }}>
+                <Text style={{ fontSize: TEXT_HEADER, fontWeight: 'bold' }}>커뮤니티</Text>
+                <TouchableOpacity
+                    onPress={()=>{
+                        if(user){
+                            navigation.navigate('AddCommunityPage', {
+                                item: route.params,
+                                fromScreen: 'SearchPage'
+                            });
+                        }else {
+                            handleLoginAsk();
+                        }
+                    }}>
+                    <Text style={{ fontSize: TEXT_HEADER * 0.7, color: '#007bff',}}>글쓰러 가기</Text>
+                </TouchableOpacity>
+            </View>
         </View>
 
     );
     return (
         <View style={styles.container}>
-            
+
             <FlatList
                 data={posts}
                 renderItem={renderItem}

@@ -68,23 +68,27 @@ const DetailedCommunityPage = ({ route }) => {
     // }else{
     //   return null;
     // }
-    if (service === 'kakaoPage') return (
-      <Image
-          {...{ uri: "https:" + webtoonImage }}
+    if (service === 'kakaoPage') {
+      return (
+        <Image
+          {...{ uri: `https:${webtoonImage}` }}
           style={styles.image}
           onError={(e) => console.log(e)}
-      />)
-  else if (service === 'kakao') return (
-      <Image
+        />
+      );
+    } else if (service === 'kakao') {
+      return (
+        <Image
           {...{ uri: webtoonImage }}
           style={styles.image}
           onError={(e) => console.log(e)}
-      />
-  )
-  else if(service ==='naver') (<WebViewImage imageURL={webtoonImage} isSearch={true} />)
-  else{
-    return null;
-  }
+        />
+      );
+    } else if (service === 'naver') {
+      return <WebViewImage imageURL={webtoonImage} isDetail={true} />;
+    } else {
+      return null;
+    }
   }
   return (
     <View style={styles.main}>
@@ -108,12 +112,12 @@ const DetailedCommunityPage = ({ route }) => {
         {renderWebtoonImage()}
           <Text style={styles.autorText}>{autor}</Text>
         </View>
-      </ScrollView>
         <View style={styles.chating}>
           {comments.map((comment, index) => (
             <Text style={styles.commentItem} key={index}>{comment}</Text>
           ))}
         </View>
+      </ScrollView>
       <View style={styles.commentInputContainer}>
         <TextInput
           style={styles.commentInput}

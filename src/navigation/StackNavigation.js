@@ -1,6 +1,5 @@
 import { createStackNavigator } from '@react-navigation/stack';
-import React, { useRef } from 'react';
-import { View, StyleSheet, TouchableOpacity } from 'react-native';
+import React from 'react';
 
 // 아이콘
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -22,11 +21,6 @@ import DetailedCommunityPage from '../community/DetailedCommunityPage';
 const Stack = createStackNavigator();
 
 const StackNavigation = () => {
-    const ref = useRef(null);
-
-
-
-
     return (
         <Stack.Navigator>
             {/* 메인 페이지 그룹 */}
@@ -92,16 +86,5 @@ const StackNavigation = () => {
         </Stack.Navigator>
     )
 }
-
-const styles = StyleSheet.create({
-    headerRight: {
-        flex: 1,
-        flexDirection: 'row',
-        alignItems: 'center',
-    },
-    icons: {
-        marginRight: 20,
-    }
-});
 
 export default StackNavigation

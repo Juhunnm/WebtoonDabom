@@ -1,9 +1,9 @@
 import React from 'react'
 import { View, StyleSheet, Dimensions,TouchableOpacity } from 'react-native';
 import { Image } from 'expo-image';
+
 const WINDOW_HEIGHT = Dimensions.get('window').height;
 
-// 플랫폼 선택 영역 사이즈
 const PLATFORM_SIZE = WINDOW_HEIGHT * 0.13;
 
 const PlatformButton = ({ isChecked, onPress, image }) => {

@@ -97,10 +97,10 @@ const WebtoonDetailPage = ({ navigation: { navigate }, route }) => {
                 },
                 {
                     text: "이동",
-                    onPress: async () => {
+                    onPress: () => {
                         navigation.navigate('Home', {
                             screen: '프로필',
-                          });
+                        });
                     }
                 }
             ]

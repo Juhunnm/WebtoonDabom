@@ -1,11 +1,11 @@
 import React, { useState,useEffect } from 'react';
-import { Text, View, StyleSheet, ScrollView, TouchableOpacity, TextInput, Button,Image, Alert } from 'react-native';
+import { Text, View, StyleSheet, ScrollView, TouchableOpacity, TextInput, Button, Alert } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
 import { getDocs, collection, addDoc } from "firebase/firestore";
 import { auth } from '../../firebaseConfig';
 import { fireStoreDB } from '../../firebaseConfig';
 import WebViewImage from '../home/components/WebViewImage';
+import { Image } from "react-native-expo-image-cache";
 
 const DetailedCommunityPage = ({ route }) => {
   const { title, subTitle, id,webtoonTitle,imageURL,webtoonImage,autor,webtoonID,service } = route.params;
@@ -42,6 +42,7 @@ const DetailedCommunityPage = ({ route }) => {
 
     setCommentInput(''); // 입력창 초기화
     console.log('댓글 작성 시간:', new Date().toLocaleString()); // 댓글 작성 시간 출력
+    fetchComments();
   }
 
 
@@ -55,18 +56,35 @@ const DetailedCommunityPage = ({ route }) => {
 
   useEffect(() => {
     fetchComments(); // 컴포넌트가 마운트될 때 댓글을 불러옵니다
-  }, [comments]);
+  }, []);
 
   const renderWebtoonImage = () => {
-      if (service === 'kakaoPage') {
-        return <Image source={{ uri: "https:" + webtoonImage }} style={styles.image} />;
-      } else if (service === 'kakao') {
-        return <Image source={{ uri: webtoonImage }} style={styles.image} />;
-      } else if(service ==='naver') {
-        return <WebViewImage imageURL={webtoonImage} style={styles.image} />
-    }else{
-      return null;
-    }
+    //   if (service === 'kakaoPage') {
+    //     return <Image source={{ uri: "https:" + webtoonImage }} style={styles.image} />;
+    //   } else if (service === 'kakao') {
+    //     return <Image source={{ uri: webtoonImage }} style={styles.image} />;
+    //   } else if(service ==='naver') {
+    //     return <WebViewImage imageURL={webtoonImage} isSearch={true} />
+    // }else{
+    //   return null;
+    // }
+    if (service === 'kakaoPage') return (
+      <Image
+          {...{ uri: "https:" + webtoonImage }}
+          style={styles.image}
+          onError={(e) => console.log(e)}
+      />)
+  else if (service === 'kakao') return (
+      <Image
+          {...{ uri: webtoonImage }}
+          style={styles.image}
+          onError={(e) => console.log(e)}
+      />
+  )
+  else if(service ==='naver') (<WebViewImage imageURL={webtoonImage} isSearch={true} />)
+  else{
+    return null;
+  }
   }
   return (
     <View style={styles.main}>
@@ -167,7 +185,7 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start', // 이미지 컨테이너를 왼쪽으로 정렬
   },
   image: {
-    width: '100%', // 이미지의 너비 조정 (예: 200)
+    width: 200, // 이미지의 너비 조정 (예: 200)
     height: 200, // 이미지의 높이 설정 (예: 200)
     resizeMode: 'contain', // 이미지 비율 유지
     borderRadius : 10,

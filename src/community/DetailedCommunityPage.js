@@ -1,5 +1,5 @@
 import React, { useState,useEffect } from 'react';
-import { Text, View, StyleSheet, ScrollView, TouchableOpacity, TextInput, Button, Alert } from 'react-native';
+import { Text, View, StyleSheet, ScrollView, TouchableOpacity, TextInput, Button, Alert} from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { getDocs, collection, addDoc } from "firebase/firestore";
 import { auth } from '../../firebaseConfig';
@@ -68,23 +68,27 @@ const DetailedCommunityPage = ({ route }) => {
     // }else{
     //   return null;
     // }
-    if (service === 'kakaoPage') return (
-      <Image
-          {...{ uri: "https:" + webtoonImage }}
+    if (service === 'kakaoPage') {
+      return (
+        <Image
+          {...{ uri: `https:${webtoonImage}` }}
           style={styles.image}
           onError={(e) => console.log(e)}
-      />)
-  else if (service === 'kakao') return (
-      <Image
+        />
+      );
+    } else if (service === 'kakao') {
+      return (
+        <Image
           {...{ uri: webtoonImage }}
           style={styles.image}
           onError={(e) => console.log(e)}
-      />
-  )
-  else if(service ==='naver') (<WebViewImage imageURL={webtoonImage} isSearch={true} />)
-  else{
-    return null;
-  }
+        />
+      );
+    } else if (service === 'naver') {
+      return <WebViewImage imageURL={webtoonImage} isDetail={true} />;
+    } else {
+      return null;
+    }
   }
   return (
     <View style={styles.main}>
@@ -96,7 +100,7 @@ const DetailedCommunityPage = ({ route }) => {
           <Text>{subTitle}</Text>
         </View>
         <View style={styles.imageContainerCenter}>
-                <Image source={{ uri: imageURL }} style={styles.image} />
+                <Image {...{ uri: imageURL }}style={styles.image} />
             </View>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <TouchableOpacity>
@@ -108,12 +112,12 @@ const DetailedCommunityPage = ({ route }) => {
         {renderWebtoonImage()}
           <Text style={styles.autorText}>{autor}</Text>
         </View>
-      </ScrollView>
         <View style={styles.chating}>
           {comments.map((comment, index) => (
             <Text style={styles.commentItem} key={index}>{comment}</Text>
           ))}
         </View>
+      </ScrollView>
       <View style={styles.commentInputContainer}>
         <TextInput
           style={styles.commentInput}
@@ -185,8 +189,8 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start', // 이미지 컨테이너를 왼쪽으로 정렬
   },
   image: {
-    width: 200, // 이미지의 너비 조정 (예: 200)
-    height: 200, // 이미지의 높이 설정 (예: 200)
+    width: 150, // 이미지의 너비 조정 (예: 200)
+    height: 150, // 이미지의 높이 설정 (예: 200)
     resizeMode: 'contain', // 이미지 비율 유지
     borderRadius : 10,
   },

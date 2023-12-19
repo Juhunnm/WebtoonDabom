@@ -17,7 +17,7 @@ import CommunityList from '../community/components/CommunutyList';
 import { auth } from '../../firebaseConfig';
 
 import { fireStoreDB } from '../../firebaseConfig';
-import { collection, query, getDocs, where, getDoc, orderBy, doc } from "firebase/firestore";
+import { collection, getDocs } from "firebase/firestore";
 
 import { useNavigation } from '@react-navigation/native';
 
@@ -76,13 +76,10 @@ const WebtoonDetailPage = ({ navigation: { navigate }, route }) => {
             if (bookmarks) {
                 const bookmarkArray = JSON.parse(bookmarks);
                 if (bookmarkArray.some(webtoon => webtoon._id === _id)) {
-                    //console.log("즐겨찾기 되어있는 웹툰: " + title);
                     setIsBookMark(true);
                 } else {
-                    //console.log("즐겨찾기 안됨: " + title);
+                    console.log("즐겨찾기 안됨: " + title);
                 }
-            } else {
-                //console.log("즐겨찾기 되어있는 웹툰이 하나도 없음");
             }
         } catch (error) {
             console.error('AsyncStorage error:', error);
@@ -125,12 +122,9 @@ const WebtoonDetailPage = ({ navigation: { navigate }, route }) => {
 
             if (!isBookMark) {
                 bookmarkArray = [...bookmarkArray, route.params];
-                //console.log("즐겨찾기 추가: " + title);
             } else {
                 bookmarkArray = bookmarkArray.filter(webtoon => webtoon._id !== _id);
-                //console.log("즐겨찾기 제거: " + title);
             }
-            //console.log('즐찾 버튼 클릭')
             setIsBookMark(!isBookMark);
 
             await AsyncStorage.setItem('bookMark', JSON.stringify(bookmarkArray));
@@ -139,16 +133,15 @@ const WebtoonDetailPage = ({ navigation: { navigate }, route }) => {
         }
     };
 
-    // 웹툰 보러가는 함수(웹으로 연결)
+    // url로 웹 링크 연결
     const handleGoWebtoon = () => {
-        console.log(_id);
         Linking.openURL(url).catch((err) => console.error('An error occurred', err));
     }
 
 
+    const [posts, setPosts] = useState([]); // 커뮤니티 게시글 데이터
 
-    const [posts, setPosts] = useState([]);
-
+    // 커뮤니티 게시글 정보 가져오기
     const fetchDocs = async () => {
         try {
             // 웹툰별 posts 컬렉션 참조 생성
@@ -164,10 +157,8 @@ const WebtoonDetailPage = ({ navigation: { navigate }, route }) => {
             }));
 
             if (fetchedPosts.length > 0) {
-                //console.log("게시글 정보 가져옴");
                 setPosts(fetchedPosts);
             } else {
-                //console.log("게시글이 없습니다.");
                 setPosts([]);
             }
         } catch (error) {
@@ -176,6 +167,7 @@ const WebtoonDetailPage = ({ navigation: { navigate }, route }) => {
         }
     };
 
+    // 위로 스크롤 하면 로딩 스피너 나타나고 게시글 데이터 다시 불러옴
     const [refreshing, setRefreshing] = useState(false);
 
     const onRefresh = useCallback(() => {
@@ -215,7 +207,7 @@ const WebtoonDetailPage = ({ navigation: { navigate }, route }) => {
                             onError={(e) => console.log(e)}
                         />
                     )
-                    else return (<WebViewImage imageURL={img} isSearch={true} />)
+                    else return (<WebViewImage imageURL={img} isDetail={true} />)
                 })()}
                 <View style={styles.itemContent}>
                     <View style={{ gap: 15 }}>
@@ -230,8 +222,6 @@ const WebtoonDetailPage = ({ navigation: { navigate }, route }) => {
                     </TouchableOpacity>
                 </View>
             </View>
-
-            {/* <Text style={{ fontSize: TEXT_HEADER, fontWeight: 'bold' }}>작품정보</Text> */}
             <View style={styles.webtoonInfoContainer}>
                 <View style={styles.webtoonInfo}>
                     <Text style={styles.webtoonInfoText}># {koreanUpdateDays.join(', ')} 연재</Text>

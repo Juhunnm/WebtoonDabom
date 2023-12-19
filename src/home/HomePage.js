@@ -7,7 +7,6 @@ import {
 } from 'react-native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useNavigation } from '@react-navigation/native';
 
 import { LoadingContext } from '../loading/LoadingContext';
 import LoadingSpinner from '../loading/LoadingSpinner';
@@ -23,16 +22,16 @@ const WINDOW_HEIGHT = Dimensions.get('window').height;
 // 플랫폼 선택 영역 사이즈
 const PLATFORM_SIZE = WINDOW_HEIGHT * 0.13;
 
+// 요늘의 요일값 가져오기
 const getTodayTabName = () => {
-    const dayOfWeek = new Date().getDay();
+    const dayOfWeek = new Date().getDay(); // return값 -> 일 = 0, 월 = 1, ..., 토 = 6
     const dayNameMap = ['일', '월', '화', '수', '목', '금', '토'];
     return dayNameMap[dayOfWeek];
 };
 
 
 const HomePage = () => {
-    const navigation = useNavigation();
-
+    // 로딩 관련 컴포넌트
     const { loading } = useContext(LoadingContext);
     const { spinner } = useContext(LoadingContext);
 
@@ -56,19 +55,12 @@ const HomePage = () => {
                 return JSON.parse(storedData);
             }
 
-            const startTime = new Date().getTime();  // 요청 시작 시간 측정
-
             const response = await fetch(apiUrl);
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
 
-            const data = await response.json();  // JSON 응답을 파싱
-
-            const endTime = new Date().getTime();  // 요청 종료 시간 측정
-            const duration = (endTime - startTime) / 1000;  // 요청에 걸린 시간 계산
-            
-            console.log(`API 요청에 걸린 시간: ${duration}초`);
+            const data = await response.json();
 
             await AsyncStorage.setItem('webtoons', JSON.stringify(data));
         } catch (e) {
@@ -125,8 +117,6 @@ const HomePage = () => {
             <Tab.Navigator
                 initialRouteName={initialTabName}
                 screenOptions={{
-                    scrollEnabled: false, // 탭 스크롤 활성화
-                    tabBarItemStyle: { flex: 1 }, // 탭 아이템 너비를 자동 조절
                     lazy: true,
                 }}
             >

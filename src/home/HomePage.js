@@ -105,10 +105,10 @@ const HomePage = () => {
                 <PlatformButton
                     isChecked={isLejinChecked}
                     onPress={() => {
-                        setLejinChecked(!isLejinChecked)
                         if(!isLejinChecked){
                             Alert.alert("레진코믹스는 준비중입니다.")
                         }
+                        setLejinChecked(!isLejinChecked)
                     }}
                     image={require('../../img/lejinIcon.svg')}
                 />

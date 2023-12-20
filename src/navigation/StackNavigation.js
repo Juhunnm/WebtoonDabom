@@ -54,7 +54,7 @@ const StackNavigation = () => {
                     headerBackTitleVisible: false, // 뒤로가기 버튼 옆의 텍스트를 표시하지 않음
                 }} />
                   <Stack.Screen name="Profile" component={Profile} options={{
-                    title: '계정을 만드세요',
+                    title: '사용자 정보',
                     headerBackTitleVisible: false, // 뒤로가기 버튼 옆의 텍스트를 표시하지 않음
                 }} />
             </Stack.Group>

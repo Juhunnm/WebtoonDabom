@@ -4,11 +4,8 @@ import { getAuth, initializeAuth, getReactNativePersistence } from "firebase/aut
 import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage';
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
-import { keys } from "./key/ApiKey";
-
-
 const firebaseConfig = {
-  apiKey: keys.firebaseKey,
+  apiKey: "AIzaSyDe3ULxaI5sl3xEWCNRa7109TFGBjDjwLc",
   authDomain: "webtoon-dabom.firebaseapp.com",
   projectId: "webtoon-dabom",
   storageBucket: "webtoon-dabom.appspot.com",
@@ -17,7 +14,6 @@ const firebaseConfig = {
   measurementId: "G-LPLQP4TD2P"
 };
 
-// 파이어베이스 초기화
 const app = initializeApp(firebaseConfig);
 export const auth = initializeAuth(app, {
   persistence: getReactNativePersistence(ReactNativeAsyncStorage)

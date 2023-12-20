@@ -11,10 +11,10 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 // Pages
 import HomePage from '../home/HomePage';
 import BookMarkPage from '../bookMark/BookMarkPage';
-// import SearchPage from '../home/SearchPage';
 import ProfilePage from '../profile/ProfilePage';
 import CommunityPage from '../community/CommunityPage';
-import EditProfile from '../profile/components/EditProfile';
+//import SearchPage from '../home/SearchPage';
+import Profile from './../profile/components/Profile';
 import { auth } from './../../firebaseConfig';
 
 const Tab = createBottomTabNavigator();
@@ -24,8 +24,8 @@ const BottomTabNavigation = () => {
     const handleSearch = () => {
         navigation.navigate("SearchPage",{isWrite:false});
     }
-    const handleEdit= () => {
-        navigation.navigate("EditProfile");
+    const handleProfileEdit= () => {
+        navigation.navigate("Profile");
     }
 
     return (
@@ -54,7 +54,7 @@ const BottomTabNavigation = () => {
                  headerRight: () => (
                     //if user is logged in then show below button
                     auth.currentUser && (
-                        <TouchableOpacity onPress={() => handleEdit}>
+                        <TouchableOpacity onPress={handleProfileEdit}>
                             <Text style={{ marginRight: 15, fontSize: 15 }}>수정</Text>
                         </TouchableOpacity>
                     )

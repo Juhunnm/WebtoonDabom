@@ -14,7 +14,6 @@ export function LoggedIn() {
   const [name, setName] = useState('');
   const [imgURL, setImgURL] = useState('');
 
-  // Function to fetch user information
   const getUserInfo = async () => {
     try {
       const user = auth.currentUser;
@@ -31,12 +30,10 @@ export function LoggedIn() {
     }
   };
 
-  // Load user information when the component mounts
   useEffect(() => {
     getUserInfo();
   }, []);
 
-  // Reload user information when the screen comes into focus
   useFocusEffect(
     React.useCallback(() => {
       getUserInfo();

@@ -11,9 +11,8 @@ import WebtoonListItem from '../home/components/WebtoonListItem';
 
 const BookMarkPage = () => {
   const navigation = useNavigation();
-  const [bookmarkedWebtoons, setBookmarkedWebtoons] = useState([]); // 즐겨찾기 웹툰 목록
+  const [bookmarkedWebtoons, setBookmarkedWebtoons] = useState([]); 
 
-  // AsyncStorage에서 즐겨찾기 되어있는 웹툰 데이터 들고오는 함수
   const loadBookmarkedWebtoons = async () => {
     try {
       const storedBookmarks = await AsyncStorage.getItem('bookMark');
@@ -30,7 +29,6 @@ const BookMarkPage = () => {
   };
 
 
-  // 페이지 포커스 될 때마다 즐찾 웹툰 불러오기
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
       loadBookmarkedWebtoons();

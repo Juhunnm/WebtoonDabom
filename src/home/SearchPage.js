@@ -22,7 +22,6 @@ const SearchPage = ({ navigation: { navigate }, route }) => {
     const [filteredWebtoons, setFilteredWebtoons] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
 
-    // 헤더에 TextInput넣기
     useEffect(() => {
         navigation.setOptions({
             headerTitle: () => (
@@ -37,7 +36,7 @@ const SearchPage = ({ navigation: { navigate }, route }) => {
         });
     }, [navigation]);
 
-    // SearchPage로드시 AsyncStorage에서 웹툰 데이터 불러오기
+
     useEffect(() => {
         const fetchWebtoons = async () => {
             const storedData = await AsyncStorage.getItem('webtoons');
@@ -49,7 +48,7 @@ const SearchPage = ({ navigation: { navigate }, route }) => {
         fetchWebtoons();
     }, []);
 
-    // Text입력할때마다 값에 맞는 데이터 불러오기
+
     useEffect(() => {
         if (searchQuery) {
             const lowerCaseQuery = searchQuery.toLowerCase();
@@ -114,7 +113,6 @@ const styles = StyleSheet.create({
         fontSize: WINDOW_HEIGHT * 0.025,
         backgroundColor: '#fff',
         paddingHorizontal: 10,
-        // 추가 스타일
     },
     emptyContainer: {
         flex: 1,

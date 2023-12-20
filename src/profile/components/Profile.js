@@ -24,24 +24,22 @@ const Profile = () => {
   const initialName = isLoggedIn ? currentName : '';
   const [name, setName] = useState(initialName);
   const [error, setError] = useState(null);
-  //image  address
+
   const isImageExist = auth.currentUser !== null;
   const currentImgUrl = auth.currentUser.photoURL;
   const initialImgUrl = isLoggedIn ? currentImgUrl : '';
   const [selectImageUrl, setImageUrl] = useState(initialImgUrl);
 
-  //권한 요청
+
   const [status, requestPermission] = ImagePicker.useMediaLibraryPermissions();
 
   const uploadImage = async () => {
-    // 권한 확인 코드: 권한 없으면 물어보고, 승인하지 않으면 함수 종료
     if (!status?.granted) {
       const permission = await requestPermission();
       if (!permission.granted) {
         return null;
       }
     }
-    // 이미지 업로드 기능
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: false,
@@ -49,9 +47,8 @@ const Profile = () => {
       aspect: [1, 1]
     });
     if (result.canceled) {
-      return null; // 이미지 업로드 취소한 경우
+      return null;
     }
-    //console.log(result);
     setImageUrl(result.assets[0].uri);
   };
 
@@ -90,20 +87,16 @@ const Profile = () => {
 
 
   const uploadImageToFirebase = async (imageUri) => {
-    // 이미지 파일 이름 (예: image_12345.jpg)
     const fileName = `profile_image_${new Date().getTime()}.jpg`;
     const storageRef = ref(storage, `profileImages/${fileName}`);
 
     try {
-      // 이미지를 Blob 형태로 변환
       if (imageUri) {
         const response = await fetch(imageUri);
         const blob = await response.blob();
 
-        // Blob을 Firebase Storage에 업로드
         await uploadBytesResumable(storageRef, blob);
 
-        // 업로드된 이미지의 URL 가져오기
         const url = await getDownloadURL(storageRef);
         return url;
       } else {

@@ -37,10 +37,6 @@ const CommunityPage = () => {
             spinner.start();
             let allPosts = [];
             if (selectedService === 'All') {
-                // 게시글 전부 가져오는 코든데 최적화가 무조건 필요함
-                // 현재 방식은 잡담 다가져오고, 네이버 다가져오고, 카카오 ... 방식임
-                // 효율이 미친듯이 떨어짐
-                // 플랫폼별로 한개씩 게시글을 들고오고 스크롤 끝까지 내리면 또 한개씩 들고오는 방식 괜찮아보임
                 const services = ['smallTalk', 'naver', 'kakao', 'kakaoPage'];
 
                 for (const service of services) {
@@ -54,12 +50,8 @@ const CommunityPage = () => {
                     }
                 }
             } else {
-                // 물론 여기도 플랫폼에서 데이터 긁어올때 7개 정도씩 긁어오고 스크롤 끝까지 내렸을때
-                // 추가로 들고오도록 수정필요할것 같음
                 const servicePostsCollectionRef = collection(fireStoreDB, `${selectedService}Posts`);
                 const querySnapshot = await getDocs(servicePostsCollectionRef);
-                // 이 반복문 문법은 
-                // 파이썬의 for 변수 in 리스트: 과 같음
                 for (const doc of querySnapshot.docs) {
                     const postsCollectionRef = collection(fireStoreDB, `${selectedService}Posts/${doc.id}/posts`);
                     const postsSnapshot = await getDocs(postsCollectionRef);
@@ -69,9 +61,8 @@ const CommunityPage = () => {
                 }
             }
 
-            // 게시글을 date 필드를 기준으로 내림차순 정렬
+
             allPosts.sort((a, b) => b.date.localeCompare(a.date));
-            //찾아봐야겠다
             console.log(`데이터: `, allPosts);
             setListData(allPosts);
         } catch (error) {
@@ -86,31 +77,27 @@ const CommunityPage = () => {
     }, [selectedService]);
 
     handleAddList = () => {
-        const user = auth.currentUser; // 로그인 안되어 있으면 null반환
+        const user = auth.currentUser;
         if (!user) {
-            Alert.alert("로그인을 해주세요.");// TODO: 로그인 페이지로 넘어가는 로직 추가필요
+            Alert.alert("로그인을 해주세요.");
             return;
         }
         navigation.navigate('AddCommunityPage');
     };
 
     const handleServiceSelect = (service) => {
-        // 기본으로 #ALL이 선택되고 이미 선택된 버튼 다시 누르면
-        // 아무런 기능도 없도록 구현
         if (selectedService !== service) {
             setSelectedService(service);
         }
     };
 
-    // FlatList의 윗부분에 표시될 부분
-    // 해시태그 지정하는 부분임
+
     const renderHeader = () => (
         <View style={styles.serviceButtonContainer} >
             <ScrollView
-                horizontal={true}//가로슬라이드
+                horizontal={true}
                 style={{ backgroundColor: '#fff' }}
                 showsHorizontalScrollIndicator={false}>
-                {/* 스크롤바 없앰 */}
                 <View style={styles.categoryList}>
                     {['All', 'smallTalk', 'naver', 'kakao', 'kakaoPage'].map((service) => (
                         <TouchableOpacity
@@ -129,7 +116,7 @@ const CommunityPage = () => {
         </View>
 
     );
-    // FlatList가 비어있을때 표시할 내용
+
     const renderEmptyComponent = () => (
         <View style={styles.emptyContainer}>
             <Text style={styles.emptyText}>
@@ -138,47 +125,25 @@ const CommunityPage = () => {
         </View>
     );
 
-    // const filteredList = listData.filter(
-    //     item => item.posts.title.toLowerCase().includes(searchList.toLowerCase())
-    // );
 
     return (
         <>
             {loading && <LoadingSpinner />}
             <View style={styles.container}>
-                {/* <View style={styles.searchBar}>
-                <TextInput
-                    style={styles.input}
-                    placeholder="커뮤니티 검색"
-                    placeholderTextColor="#ffff"
-                    value={searchList}
-                    onChangeText={(text) => setSearchList(text)}
-                />
-                <FontAwesome name="search" size={24} color="black" />
-            </View> */}
 
                 <FlatList
                     style={{ backgroundColor: '#fff' }}
-                    contentContainerStyle={{ flexGrow: 1 }}//화면을 꽉차게
-                    data={listData}//map함수
+                    contentContainerStyle={{ flexGrow: 1 }}
+                    data={listData}
                     ListHeaderComponent={renderHeader}
-                    // 위에다가 렌더링
                     renderItem={({ item }) => <CommunityList {...item} />}
-                    // 
                     keyExtractor={item => item.date}
-                    // 키값을 줌
                     initialNumToRender={4}
-                    //맨처음 시작할때 4개 실행먼저
                     maxToRenderPerBatch={4}
-                    //화면에 띄울 갯수
                     windowSize={2}
-                    //화면 밖에 얼마큼 렌더링할껀가
                     removeClippedSubviews={true}
-                    //flase를 주면 지우지 않는다.
                     ListEmptyComponent={renderEmptyComponent}
-                //아무것도 없을때는
                 />
-                {/* 글쓰기 버튼 */}
                 <TouchableOpacity style={styles.createButton} onPress={handleAddList}>
                     <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 20 }}>+</Text>
                 </TouchableOpacity>

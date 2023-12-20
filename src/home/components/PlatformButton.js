@@ -1,5 +1,5 @@
 import React from 'react'
-import { View, StyleSheet, Dimensions,TouchableOpacity } from 'react-native';
+import { View, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
 import { Image } from 'expo-image';
 
 const WINDOW_HEIGHT = Dimensions.get('window').height;

@@ -18,33 +18,26 @@ import PlatformButton from './components/PlatformButton';
 const Tab = createMaterialTopTabNavigator();
 const WINDOW_HEIGHT = Dimensions.get('window').height;
 
-
-// 플랫폼 선택 영역 사이즈
 const PLATFORM_SIZE = WINDOW_HEIGHT * 0.13;
 
-// 요늘의 요일값 가져오기
 const getTodayTabName = () => {
-    const dayOfWeek = new Date().getDay(); // return값 -> 일 = 0, 월 = 1, ..., 토 = 6
+    const dayOfWeek = new Date().getDay();
     const dayNameMap = ['일', '월', '화', '수', '목', '금', '토'];
     return dayNameMap[dayOfWeek];
 };
 
 
 const HomePage = () => {
-    // 로딩 관련 컴포넌트
     const { loading } = useContext(LoadingContext);
     const { spinner } = useContext(LoadingContext);
 
-    // 오늘의 요일
     const initialTabName = getTodayTabName();
 
-    // 플랫폼 선택 state
     const [isNaverChecked, setNaverChecked] = useState(true);
     const [isKakaoChecked, setKakaoChecked] = useState(false);
     const [isPageChecked, setPageChecked] = useState(false);
     const [isLejinChecked, setLejinChecked] = useState(false);
 
-    // 웹툰 정보 API 요청
     const fetchWebtoonData = async (apiUrl) => {
         try {
             spinner.start();
@@ -105,7 +98,7 @@ const HomePage = () => {
                 <PlatformButton
                     isChecked={isLejinChecked}
                     onPress={() => {
-                        if(!isLejinChecked){
+                        if (!isLejinChecked) {
                             Alert.alert("레진코믹스는 준비중입니다.")
                         }
                         setLejinChecked(!isLejinChecked)
@@ -113,7 +106,7 @@ const HomePage = () => {
                     image={require('../../img/lejinIcon.svg')}
                 />
             </View>
-            
+
             <Tab.Navigator
                 initialRouteName={initialTabName}
                 screenOptions={{

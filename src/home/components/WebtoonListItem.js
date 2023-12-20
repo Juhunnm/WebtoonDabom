@@ -21,16 +21,13 @@ const platFormMappings = {
     'kakaoPage': '카카오 페이지',
 };
 const convertPlatformToKorean = (platform) => {
-    // platform에 맞는 값을 platFormMappings에서 들고오고
-    // 만약 없다면 그냥 platform 반환
-    return platFormMappings[platform] || platform; 
+    return platFormMappings[platform] || platform;
 };
 
 const WebtoonListItem = ({ item, onPress }) => {
-    const koreanPlatforms = convertPlatformToKorean(item.service); // 연재요일 매핑하기
+    const koreanPlatforms = convertPlatformToKorean(item.service);
     return (
         <TouchableOpacity style={styles.item} onPress={onPress}>
-            {/* 플랫폼에 따라 이미지 제공 방식이 달라서 조건문으로 처리 */}
             {(() => {
                 if (item.service === 'kakaoPage') return (
                     <Image
@@ -53,9 +50,9 @@ const WebtoonListItem = ({ item, onPress }) => {
                     <Text style={styles.itemName}>{item.title}</Text>
                     <Text style={styles.itemText}>{item.author}</Text>
                 </View>
-                
+
                 <Text style={styles.itemService}>{koreanPlatforms}</Text>
-               
+
             </View>
         </TouchableOpacity>
     );

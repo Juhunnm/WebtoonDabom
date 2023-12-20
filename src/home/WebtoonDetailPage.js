@@ -28,14 +28,14 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 
 const WINDOW_HEIGHT = Dimensions.get("window").height;
 
-// 전체적인 요소 사이즈
+
 const ITEM_SIZE = WINDOW_HEIGHT * 0.17;
-// 헤더 텍스트 사이즈 (작품정보, 커뮤니티)
+
 const TEXT_HEADER = WINDOW_HEIGHT * 0.025;
-// 글작성 버튼 크기
+
 const WRITE_BUTTON_SIZE = WINDOW_HEIGHT * 0.085;
 
-// 연재요일 한국어로 바꿔주는 맵
+
 const dayMappings = {
     'mon': '월요일',
     'tue': '화요일',
@@ -54,7 +54,6 @@ const convertDaysToKorean = (days) => {
 const WebtoonDetailPage = ({ navigation: { navigate }, route }) => {
     const navigation = useNavigation();
     const user = auth.currentUser;
-    // 웹툰 데이터 구조 분해
     const {
         _id,
         title,
@@ -67,12 +66,11 @@ const WebtoonDetailPage = ({ navigation: { navigate }, route }) => {
         additional,
     } = route.params;
 
-    // 연재요일 매핑하기
+
     const koreanUpdateDays = convertDaysToKorean(updateDays);
-    // 즐겨찾기 상태
+
     const [isBookMark, setIsBookMark] = useState(false);
 
-    // 페이지 들어왔을 때 즐겨찾기 되어있는 웹툰인지 확인하는 함수
     const initializeBookmark = async () => {
         try {
             const bookmarks = await AsyncStorage.getItem('bookMark');
@@ -121,14 +119,14 @@ const WebtoonDetailPage = ({ navigation: { navigate }, route }) => {
         }
     }
 
-    // 현재 웹툰이 즐찾이 되어있는지 확인
+
     useEffect(() => {
         initializeBookmark();
         fetchDocs();
     }, []);
 
 
-    // 즐찾 추가하기 or 제거하기
+
     const handleBookmark = async () => {
         try {
             const bookmarks = await AsyncStorage.getItem('bookMark');
@@ -147,24 +145,21 @@ const WebtoonDetailPage = ({ navigation: { navigate }, route }) => {
         }
     };
 
-    // url로 웹 링크 연결
+
     const handleGoWebtoon = () => {
         Linking.openURL(url).catch((err) => console.error('An error occurred', err));
     }
 
 
-    const [posts, setPosts] = useState([]); // 커뮤니티 게시글 데이터
+    const [posts, setPosts] = useState([]);
 
-    // 커뮤니티 게시글 정보 가져오기
+
     const fetchDocs = async () => {
         try {
-            // 웹툰별 posts 컬렉션 참조 생성
             const postsCollectionRef = collection(fireStoreDB, `${service}Posts/${_id}/posts`);
 
-            // posts 컬렉션의 문서들을 가져옴
             const querySnapshot = await getDocs(postsCollectionRef);
 
-            // 문서 데이터를 배열로 변환
             const fetchedPosts = querySnapshot.docs.map(doc => ({
                 id: doc.id,
                 ...doc.data()
@@ -181,7 +176,6 @@ const WebtoonDetailPage = ({ navigation: { navigate }, route }) => {
         }
     };
 
-    // 위로 스크롤 하면 로딩 스피너 나타나고 게시글 데이터 다시 불러옴
     const [refreshing, setRefreshing] = useState(false);
 
     const onRefresh = useCallback(() => {
@@ -206,7 +200,6 @@ const WebtoonDetailPage = ({ navigation: { navigate }, route }) => {
     const renderHeader = () => (
         <View>
             <View style={styles.itemLayout}>
-                {/* 플랫폼 별로 이미지 제공 방식이 다르기 때문에 조건문으로 처리 */}
                 {(() => {
                     if (service === 'kakaoPage') return (
                         <Image
@@ -230,7 +223,6 @@ const WebtoonDetailPage = ({ navigation: { navigate }, route }) => {
                     </View>
                     <TouchableOpacity style={styles.bookMarkButton}
                         onPress={handleBookmark}>
-                        {/* 즐찾 여부에 따른 버튼 아이콘 변화 */}
                         {isBookMark ? <AntDesign name="star" size={ITEM_SIZE * 0.12} color={'#000'} /> : <AntDesign name="staro" size={ITEM_SIZE * 0.12} color={'#000'} />}
                         <Text style={{ fontSize: ITEM_SIZE * 0.12, fontWeight: 'bold', color: '#000' }}>즐겨찾기</Text>
                     </TouchableOpacity>
@@ -282,7 +274,7 @@ const WebtoonDetailPage = ({ navigation: { navigate }, route }) => {
                 }
             />
             <TouchableOpacity style={styles.createButton} onPress={handleAddList}>
-                <MaterialIcons name="edit" size={WRITE_BUTTON_SIZE*0.45} color={'white'}/>
+                <MaterialIcons name="edit" size={WRITE_BUTTON_SIZE * 0.45} color={'white'} />
             </TouchableOpacity>
         </View>
     )
@@ -377,7 +369,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#007bff',
         width: WRITE_BUTTON_SIZE,
         height: WRITE_BUTTON_SIZE,
-        borderRadius: WRITE_BUTTON_SIZE/2,
+        borderRadius: WRITE_BUTTON_SIZE / 2,
         borderWidth: 2,
         borderColor: 'white',
         alignItems: 'center',

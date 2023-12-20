@@ -65,7 +65,7 @@ export const styles = StyleSheet.create({
   button: {
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#282C34', // Google blue color
+    backgroundColor: '#282C34',
     paddingHorizontal: WINDOW_WIDTH * 0.02,
     borderRadius: 5,
     opacity: 0.7,
@@ -86,8 +86,8 @@ export const styles = StyleSheet.create({
   },
   verticalLine: {
     height: WINDOW_HEIGHT * 0.02,
-    width: 2, // Adjust the width of the line as needed
-    backgroundColor: '#aaa', // Adjust the color of the line as needed
+    width: 2,
+    backgroundColor: '#aaa',
     verticalAlign: 'middle',
     marginHorizontal: 20,
   },
@@ -175,7 +175,6 @@ export const styles = StyleSheet.create({
     marginRight: 10,
   },
   profileEdit: {
-    // maker an overlay to make the edit icon on the profile image
     position: 'absolute',
     width: '28%',
     height: '45%',

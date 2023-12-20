@@ -46,15 +46,13 @@ const WebtoonList = ({ updateDay, isNaverChecked, isKakaoChecked, isPageChecked 
     useEffect(() => {
         const focusUnsubscribe = navigation.addListener('focus', () => {
             getWebtoonsByCondition(updateDay);
-        }); // 페이지 포커스 되면 요일에 맞는 데이터 가져오기
+        });
 
         const blurUnsubscribe = navigation.addListener('blur', () => {
             setWebtoons([]);
-        }); // 페이지 나가면 렌더링 됐던 데이터 없애기
+        });
 
-        // 즉 요일을 넘기면 blur -> focus순으로 실행됨
 
-        // 로딩이 끝나면 데이터 들고오기
         if (!loading) {
             getWebtoonsByCondition(updateDay);
         }
@@ -75,7 +73,7 @@ const WebtoonList = ({ updateDay, isNaverChecked, isKakaoChecked, isPageChecked 
         />, []
     );
 
-    const keyExtractor = useCallback((item) => item._id ,[]);
+    const keyExtractor = useCallback((item) => item._id, []);
 
     const renderEmptyComponent = () => (
         <View style={styles.emptyContainer}>

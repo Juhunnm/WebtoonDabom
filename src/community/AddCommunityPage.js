@@ -19,7 +19,7 @@ const AddCommunity = ({ navigation: { navigate }, route }) => {
     const [emotion, setEmotion] = useState(0);
     const [uid, setUid] = useState('');
     const [displayName, setDisplayName] = useState('');
-    // 웹툰 정보
+
     const [webtoonID, setWebtoonID] = useState('');
     const [webtoonTitle, setWebtoonTitle] = useState('');
     const [author, setAuthor] = useState('');
@@ -37,38 +37,38 @@ const AddCommunity = ({ navigation: { navigate }, route }) => {
     }, [])
 
     const [selectImageUrl, setImageUrl] = useState(null);
-    const [status, requestPermission] = ImagePicker.useMediaLibraryPermissions();//권한 요청
-    const uploadImage = async () => {// 권한 확인 코드: 권한 없으면 물어보고, 승인하지 않으면 함수 종료
+    const [status, requestPermission] = ImagePicker.useMediaLibraryPermissions();
+    const uploadImage = async () => {
         if (!status?.granted) {
             const permission = await requestPermission();
             if (!permission.granted) {
                 return null;
             }
         }
-        const result = await ImagePicker.launchImageLibraryAsync({ // 이미지 업로드 기능
+        const result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsEditing: false,
             quality: 1,
             aspect: [1, 1]
         });
         if (result.canceled) {
-            return null; // 이미지 업로드 취소한 경우
+            return null;
         }
-        setImageUrl(result.assets[0].uri); // 이미지 업로드 결과 및 이미지 경로 업데이트
+        setImageUrl(result.assets[0].uri);
     };
     const uploadImageToFirebase = async (imageUri) => {
         console.log(imageUri);
         const fileName = `profile_image_${new Date().getTime()}.jpg`;
         const storageRef = ref(storage, `profileImages/${fileName}`);
         try {
-            if (imageUri) {// 이미지를 Blob 형태로 변환
+            if (imageUri) {
                 console.log("변환시작")
                 const response = await fetch(imageUri);
                 const blob = await response.blob();
                 console.log("변환완료")
-                await uploadBytesResumable(storageRef, blob);// Blob을 Firebase Storage에 업로드
+                await uploadBytesResumable(storageRef, blob);
                 console.log("업로드시작")
-                const url = await getDownloadURL(storageRef);// 업로드된 이미지의 URL 가져오기
+                const url = await getDownloadURL(storageRef);
                 console.log("업로드 완료")
                 return url;
             } else {
@@ -80,8 +80,6 @@ const AddCommunity = ({ navigation: { navigate }, route }) => {
         }
     };
 
-    // 페이지 실행될 때마다 실행하는 함수
-    // 검색페이지에서 넘어왔을때 조건문 처리
     const getWebtoonData = () => {
         if (route.params?.fromScreen === 'SearchPage') {
             const {
@@ -135,19 +133,16 @@ const AddCommunity = ({ navigation: { navigate }, route }) => {
             const dateString = today.toISOString();
             const firebaseImageUrl = await uploadImageToFirebase(selectImageUrl);
 
-            // 웹툰ID별로 posts컬렉션 지정할떄 필드에 값이 없으면 인식을 못해서
-            // 웹툰 제목을 필드에 임의로 추가함.
-            // 값을 test: 123 이런식으로 넣어도 무관하긴 함(그냥 구분하려고 웹툰 제목 넣음)
             const webtoonDocRef = doc(fireStoreDB, `${webtoonService}Posts`, webtoonID);
             await setDoc(webtoonDocRef, {
                 webtoonTitle: webtoonTitle
             });
-            //불러오기위해서
 
 
-            // 플랫폼Posts -> 웹툰ID -> posts컬렉션 지정
+
+
             const postsCollection = collection(fireStoreDB, `${webtoonService}Posts/${webtoonID}/posts`);
-            // 위에서 지정한 컬렉션에 문서 추가(게시글 데이터)
+
             const docRef = await addDoc(postsCollection, {
                 ...firebase,
                 imageURL: firebaseImageUrl,

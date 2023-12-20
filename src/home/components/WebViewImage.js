@@ -6,7 +6,6 @@ const WINDOW_HEIGHT = Dimensions.get('window').height;
 
 const ITEM_SIZE = WINDOW_HEIGHT * 0.17;
 
-// 네이버는 웹에서의 접근만 허용하므로 웹뷰 컴포넌트를 활용해서 이미지를 띄움
 const WebViewImage = memo(({ imageURL, isDetail, isCommunity }) => {
     const webViewStyles = {
         width: ITEM_SIZE * 0.7,
@@ -54,9 +53,9 @@ const WebViewImage = memo(({ imageURL, isDetail, isCommunity }) => {
     return (
         <View style={isDetail && { height: ITEM_SIZE * 1.3 }}>
             <WebView
-                style={(()=>{
-                    if(isDetail) return detailWebViewStyles;
-                    else if(isCommunity) return communityWebViewStyles;
+                style={(() => {
+                    if (isDetail) return detailWebViewStyles;
+                    else if (isCommunity) return communityWebViewStyles;
                     else return (webViewStyles)
                 })()}
                 source={{ html: htmlContent }}

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity} from 'react-native';
+import { View, Text, TextInput, TouchableOpacity } from 'react-native';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../../../firebaseConfig';
 import { styles } from './ProfileStyles';
@@ -29,7 +29,6 @@ export default function LogIn() {
       } else {
         setError('이메일이랑 비밀번호를 확인해주시고 다시 로그인해주세요');
 
-        //reflesh after 5 seconds
         setTimeout(() => {
           setError(null);
         }, 5000);

@@ -10,7 +10,10 @@
 - 회원 가입 및 로그인에 성공했을 때 각 웹툰에 대한 토론, 리뷰, 등을 공유 할 수 있는 커뮤니티 공간을 사용할 수 있습니다. 이용자들은 이 공간에서 의견을 나누고, 웹툰에 대한 다양한 시각을 공유하고 경험할 수 있습니다.
 
 ## 어플 구현 화면
-![iPhone 12 Pro](https://github.com/kang-min-seok/Webtoon_daBom/assets/50363541/a3a9d7eb-85cc-4370-8799-40578c8291c6)
-![iPhone 12 Pro (1)](https://github.com/kang-min-seok/Webtoon_daBom/assets/50363541/c7a8a2f3-9054-4217-8228-9f99bfea89a2)
-![iPhone 12 Pro (2)](https://github.com/kang-min-seok/Webtoon_daBom/assets/50363541/0b35b70d-734a-4da5-8ab9-d2785be4bcdd)
-![iPhone 12 Pro (3)](https://github.com/kang-min-seok/Webtoon_daBom/assets/50363541/618ada0f-2f68-46c7-9cda-52dfe44142b0)
+<p align="center">
+  <img src="https://github.com/kang-min-seok/Webtoon_daBom/assets/50363541/a3a9d7eb-85cc-4370-8799-40578c8291c6" width="200"/>
+  <img src="https://github.com/kang-min-seok/Webtoon_daBom/assets/50363541/c7a8a2f3-9054-4217-8228-9f99bfea89a2" width="200"/>
+  <img src="https://github.com/kang-min-seok/Webtoon_daBom/assets/50363541/0b35b70d-734a-4da5-8ab9-d2785be4bcdd" width="200"/>
+  <img src="https://github.com/kang-min-seok/Webtoon_daBom/assets/50363541/618ada0f-2f68-46c7-9cda-52dfe44142b0" width="200"/>
+</p>
+

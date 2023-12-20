@@ -13,6 +13,7 @@ import {
 import WebViewImage from './components/WebViewImage';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CommunityList from '../community/components/CommunutyList';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 
 import { auth } from '../../firebaseConfig';
 
@@ -31,6 +32,8 @@ const WINDOW_HEIGHT = Dimensions.get("window").height;
 const ITEM_SIZE = WINDOW_HEIGHT * 0.17;
 // 헤더 텍스트 사이즈 (작품정보, 커뮤니티)
 const TEXT_HEADER = WINDOW_HEIGHT * 0.025;
+// 글작성 버튼 크기
+const WRITE_BUTTON_SIZE = WINDOW_HEIGHT * 0.085;
 
 // 연재요일 한국어로 바꿔주는 맵
 const dayMappings = {
@@ -106,6 +109,17 @@ const WebtoonDetailPage = ({ navigation: { navigate }, route }) => {
             ]
         );
     };
+
+    const handleAddList = () => {
+        if (user) {
+            navigation.navigate('AddCommunityPage', {
+                item: route.params,
+                fromScreen: 'SearchPage'
+            });
+        } else {
+            handleLoginAsk();
+        }
+    }
 
     // 현재 웹툰이 즐찾이 되어있는지 확인
     useEffect(() => {
@@ -246,21 +260,8 @@ const WebtoonDetailPage = ({ navigation: { navigate }, route }) => {
                 onPress={handleGoWebtoon}>
                 <Text style={styles.webtoonButtonText}>웹툰 보러가기</Text>
             </TouchableOpacity>
-            <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginVertical: 15 }}>
+            <View style={{ marginVertical: 15 }}>
                 <Text style={{ fontSize: TEXT_HEADER, fontWeight: 'bold' }}>커뮤니티</Text>
-                <TouchableOpacity
-                    onPress={()=>{
-                        if(user){
-                            navigation.navigate('AddCommunityPage', {
-                                item: route.params,
-                                fromScreen: 'SearchPage'
-                            });
-                        }else {
-                            handleLoginAsk();
-                        }
-                    }}>
-                    <Text style={{ fontSize: TEXT_HEADER * 0.7, color: '#007bff',}}>글쓰러 가기</Text>
-                </TouchableOpacity>
             </View>
         </View>
 
@@ -280,6 +281,9 @@ const WebtoonDetailPage = ({ navigation: { navigate }, route }) => {
                     <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
                 }
             />
+            <TouchableOpacity style={styles.createButton} onPress={handleAddList}>
+                <MaterialIcons name="edit" size={WRITE_BUTTON_SIZE*0.45} color={'white'}/>
+            </TouchableOpacity>
         </View>
     )
 }
@@ -368,6 +372,19 @@ const styles = StyleSheet.create({
     emptyText: {
         fontSize: 20,
         color: '#888888',
+    },
+    createButton: {
+        backgroundColor: '#007bff',
+        width: WRITE_BUTTON_SIZE,
+        height: WRITE_BUTTON_SIZE,
+        borderRadius: WRITE_BUTTON_SIZE/2,
+        borderWidth: 2,
+        borderColor: 'white',
+        alignItems: 'center',
+        justifyContent: 'center',
+        position: 'absolute',
+        bottom: 40,
+        right: 20,
     },
 });
 

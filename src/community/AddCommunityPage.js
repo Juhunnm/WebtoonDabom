@@ -47,7 +47,7 @@ const AddCommunity = ({ navigation: { navigate }, route }) => {
         }
         const result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
-            allowsEditing: false,
+            allowsEditing: true,
             quality: 1,
             aspect: [1, 1]
         });

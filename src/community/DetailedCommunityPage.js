@@ -9,23 +9,18 @@ import { Image } from "react-native-expo-image-cache";
 
 const DetailedCommunityPage = ({ route }) => {
   const { title, subTitle, id,webtoonTitle,imageURL,webtoonImage,autor,webtoonID,service } = route.params;
-
   // 댓글을 저장할 상태를 생성
   const [comments, setComments] = useState([]);
   const [commentInput, setCommentInput] = useState('');
 
-  
-
   // 댓글 작성 함수
   const handleAddComment = async () => {
     // 입력값이 없으면 리턴
-    if (!commentInput) return;
+    if (!commentInput) return; // 현재 로그인 정보 가져오는 코드
 
-    // 현재 로그인 정보 가져오는 코드
     const user = auth.currentUser; // 로그인 안되어 있으면 null반환
     if(!user){
-      Alert.alert("로그인을 해주세요.");
-      // TODO: 로그인 페이지로 넘어가는 로직 추가필요
+      Alert.alert("로그인을 해주세요.");// TODO: 로그인 페이지로 넘어가는 로직 추가필요
       return;
     }
     const displayName = user.displayName; // 현재 로그인 되어 있는 유저 닉네임
@@ -59,15 +54,6 @@ const DetailedCommunityPage = ({ route }) => {
   }, []);
 
   const renderWebtoonImage = () => {
-    //   if (service === 'kakaoPage') {
-    //     return <Image source={{ uri: "https:" + webtoonImage }} style={styles.image} />;
-    //   } else if (service === 'kakao') {
-    //     return <Image source={{ uri: webtoonImage }} style={styles.image} />;
-    //   } else if(service ==='naver') {
-    //     return <WebViewImage imageURL={webtoonImage} isSearch={true} />
-    // }else{
-    //   return null;
-    // }
     if (service === 'kakaoPage') {
       return (
         <Image

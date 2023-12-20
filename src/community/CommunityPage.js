@@ -6,8 +6,11 @@ import {
     ScrollView,
     FlatList,
     StyleSheet,
-    Dimensions
+    Dimensions,
+    Alert
 } from 'react-native';
+
+import { auth } from '../../firebaseConfig';
 import { FontAwesome } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { collection, getDocs } from 'firebase/firestore';
@@ -82,7 +85,12 @@ const CommunityPage = () => {
         firebaseList();
     }, [selectedService]);
 
-    const handleAddList = () => {
+    handleAddList = () => {
+        const user = auth.currentUser; // 로그인 안되어 있으면 null반환
+        if (!user) {
+            Alert.alert("로그인을 해주세요.");// TODO: 로그인 페이지로 넘어가는 로직 추가필요
+            return;
+        }
         navigation.navigate('AddCommunityPage');
     };
 
@@ -138,7 +146,6 @@ const CommunityPage = () => {
         <>
             {loading && <LoadingSpinner />}
             <View style={styles.container}>
-                {/* 커뮤니티 검색은 일단 주석처리함. 필요하면 추가하세용 */}
                 {/* <View style={styles.searchBar}>
                 <TextInput
                     style={styles.input}
@@ -169,7 +176,7 @@ const CommunityPage = () => {
                     removeClippedSubviews={true}
                     //flase를 주면 지우지 않는다.
                     ListEmptyComponent={renderEmptyComponent}
-                    //아무것도 없을때는
+                //아무것도 없을때는
                 />
                 {/* 글쓰기 버튼 */}
                 <TouchableOpacity style={styles.createButton} onPress={handleAddList}>

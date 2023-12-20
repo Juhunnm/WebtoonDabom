@@ -1,54 +1,59 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, Pressable } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, TextInput, TouchableOpacity } from 'react-native';
 import { updateProfile } from 'firebase/auth';
-import { auth, storage } from './../../../firebaseConfig';
-import { styles } from './Styling';
+import { auth, storage } from '../../../firebaseConfig';
+import { styles } from './ProfileStyles';
 import * as ImagePicker from 'expo-image-picker';
 import { Image } from 'expo-image';
 import { useContext } from 'react';
 import { LoadingContext } from './../../loading/LoadingContext';
 import LoadingSpinner from './../../loading/LoadingSpinner';
 import { useNavigation } from '@react-navigation/native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
-import { FontAwesome } from '@expo/vector-icons';
 
-export default function Profile() {
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import Icon from 'react-native-vector-icons/FontAwesome';
+
+const Profile = () => {
 
   const navigation = useNavigation();
   const { loading } = useContext(LoadingContext);
   const { spinner } = useContext(LoadingContext);
 
-  const [name, setName] = useState('');
+  const isLoggedIn = auth.currentUser !== null;
+  const currentName = auth.currentUser.displayName;
+  const initialName = isLoggedIn ? currentName : '';
+  const [name, setName] = useState(initialName);
   const [error, setError] = useState(null);
-//image  address
-const [selectImageUrl, setImageUrl] = useState(null);
-//권한 요청
-const [status, requestPermission] = ImagePicker.useMediaLibraryPermissions();
+  //image  address
+  const isImageExist = auth.currentUser !== null;
+  const currentImgUrl = auth.currentUser.photoURL;
+  const initialImgUrl = isLoggedIn ? currentImgUrl : '';
+  const [selectImageUrl, setImageUrl] = useState(initialImgUrl);
 
-const uploadImage = async () => {
-  // 권한 확인 코드: 권한 없으면 물어보고, 승인하지 않으면 함수 종료
-  if (!status?.granted) {
-    const permission = await requestPermission();
-    if (!permission.granted) {
-      return null;
+  //권한 요청
+  const [status, requestPermission] = ImagePicker.useMediaLibraryPermissions();
+
+  const uploadImage = async () => {
+    // 권한 확인 코드: 권한 없으면 물어보고, 승인하지 않으면 함수 종료
+    if (!status?.granted) {
+      const permission = await requestPermission();
+      if (!permission.granted) {
+        return null;
+      }
     }
-  }
-  // 이미지 업로드 기능
-  const result = await ImagePicker.launchImageLibraryAsync({
-    mediaTypes: ImagePicker.MediaTypeOptions.Images,
-    allowsEditing: false,
-    quality: 1,
-    aspect: [1, 1]
-  });
-  if (result.canceled) {
-    return null; // 이미지 업로드 취소한 경우
-  }
-  console.log(result);
-  // 이미지 업로드 결과 및 이미지 경로 업데이트
-
-  setImageUrl(result.assets[0].uri);
-};
+    // 이미지 업로드 기능
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: false,
+      quality: 1,
+      aspect: [1, 1]
+    });
+    if (result.canceled) {
+      return null; // 이미지 업로드 취소한 경우
+    }
+    //console.log(result);
+    setImageUrl(result.assets[0].uri);
+  };
 
 
   const handleSignup = async () => {
@@ -82,7 +87,7 @@ const uploadImage = async () => {
 
   };
 
-  
+
 
   const uploadImageToFirebase = async (imageUri) => {
     // 이미지 파일 이름 (예: image_12345.jpg)
@@ -111,12 +116,14 @@ const uploadImage = async () => {
     }
   };
 
+
   return (
     <View style={styles.mainScreen}>
       {loading && <LoadingSpinner />}
       <View style={styles.topScreen}>
+
         {error && <Text style={styles.error}>{error}</Text>}
-        <Text style={styles.label}>이름:</Text>
+        <Text style={styles.label}>이름: </Text>
         <TextInput
           value={name}
           onChangeText={(text) => setName(text)}
@@ -125,26 +132,31 @@ const uploadImage = async () => {
           placeholderTextColor="#aaa"
           style={styles.input}
         />
+      </View>
 
-        <View style={styles.uploadBox}>
-          <Pressable style={styles.uploadButton}
-            onPress={uploadImage}>
-            <Image
-              source={selectImageUrl ? { uri: selectImageUrl } : require('./../../../img/DefaultProfile.png')}
-              style={styles.profileImage}
-            />
-            <FontAwesome name="picture-o" size={18} color="#25292e" style={styles.uploadIcon} />
-            <Text style={styles.uploadLabel}>이미지 업로드</Text>
-          </Pressable>
+      <View style={styles.midScreen}>
+        <View style={styles.imageBox}>
+          <Image
+            source={selectImageUrl ? { uri: selectImageUrl } : require('./../../../img/DefaultProfile.png')}
+            style={styles.image}
+          />
+          <View style={styles.profileEdit}>
+            <TouchableOpacity style={styles.profileEditIconBox} onPress={uploadImage} >
+              <Icon name="plus" size={10} color="white" style={styles.profileEditIcon} />
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
+
       <View style={styles.bottomScreen}>
-        <Pressable style={styles.button} onPress={handleSignup}>
-          <Text style={styles.buttonText}>계정을 만들기</Text>
-        </Pressable>
+        <TouchableOpacity style={styles.button} onPress={handleSignup}>
+          <Text style={styles.buttonText}>완성하기</Text>
+        </TouchableOpacity>
         <View style={styles.sameLine}>
         </View>
       </View>
     </View>
   );
 }
+
+export default Profile;

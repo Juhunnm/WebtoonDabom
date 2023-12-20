@@ -6,18 +6,24 @@ const WINDOW_HEIGHT = Dimensions.get('window').height;
 
 const ITEM_SIZE = WINDOW_HEIGHT * 0.17;
 
- 
-const WebViewImage = memo(({ imageURL, isSearch }) => {
+// 네이버는 웹에서의 접근만 허용하므로 웹뷰 컴포넌트를 활용해서 이미지를 띄움
+const WebViewImage = memo(({ imageURL, isDetail, isCommunity }) => {
     const webViewStyles = {
         width: ITEM_SIZE * 0.7,
         height: ITEM_SIZE * 0.9,
         borderRadius: ITEM_SIZE * 0.03,
     };
 
-    const searchWebViewStyles = {
+    const detailWebViewStyles = {
         width: ITEM_SIZE,
         borderRadius: ITEM_SIZE * 0.045,
     };
+
+    const communityWebViewStyles = {
+        width: WINDOW_HEIGHT * 0.077,
+        height: WINDOW_HEIGHT * 0.1,
+        borderRadius: WINDOW_HEIGHT * 0.0045,
+    }
 
     const htmlContent = `
         <html>
@@ -46,9 +52,13 @@ const WebViewImage = memo(({ imageURL, isSearch }) => {
     `;
 
     return (
-        <View style={isSearch && { height: ITEM_SIZE * 1.3 }}>
+        <View style={isDetail && { height: ITEM_SIZE * 1.3 }}>
             <WebView
-                style={ isSearch ? searchWebViewStyles : webViewStyles}
+                style={(()=>{
+                    if(isDetail) return detailWebViewStyles;
+                    else if(isCommunity) return communityWebViewStyles;
+                    else return (webViewStyles)
+                })()}
                 source={{ html: htmlContent }}
                 originWhitelist={['*']}
                 scrollEnabled={false}

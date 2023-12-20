@@ -1,10 +1,7 @@
 import { createStackNavigator } from '@react-navigation/stack';
-import React, { useRef } from 'react';
-import { View, StyleSheet, TouchableOpacity } from 'react-native';
+import React from 'react';
 
 // 아이콘
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-
 import BottomTabNavigation from './BottomTabNavigation';
 
 // Home 관련 컴포넌트
@@ -22,11 +19,6 @@ import DetailedCommunityPage from '../community/DetailedCommunityPage';
 const Stack = createStackNavigator();
 
 const StackNavigation = () => {
-    const ref = useRef(null);
-
-
-
-
     return (
         <Stack.Navigator>
             {/* 메인 페이지 그룹 */}
@@ -79,10 +71,11 @@ const StackNavigation = () => {
                     },
                 }} />
                 <Stack.Screen name="DetailedCommunityPage" component={DetailedCommunityPage} options={{
-                    title: '글 작성',
-                    headerTintColor: 'black',
+                    title: '상세보기',
+                    headerTintColor: 'white',
                     headerBackTitleVisible: false, // 뒤로가기 버튼 옆의 텍스트를 표시하지 않음
                     headerStyle: {
+                        backgroundColor:'#435585',
                         borderBottomWidth: 0, // 헤더바의 하단 border를 없앰
                         elevation: 0, // 안드로이드에서의 shadow 없앰
                         shadowOpacity: 0, // iOS에서의 shadow 없앰
@@ -92,16 +85,5 @@ const StackNavigation = () => {
         </Stack.Navigator>
     )
 }
-
-const styles = StyleSheet.create({
-    headerRight: {
-        flex: 1,
-        flexDirection: 'row',
-        alignItems: 'center',
-    },
-    icons: {
-        marginRight: 20,
-    }
-});
 
 export default StackNavigation

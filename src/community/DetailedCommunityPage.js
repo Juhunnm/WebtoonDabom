@@ -1,40 +1,49 @@
 import React, { useState,useEffect } from 'react';
-import { Text, View, StyleSheet, ScrollView, TouchableOpacity, TextInput, Button } from 'react-native';
+import { Text, View, StyleSheet, ScrollView, TouchableOpacity, TextInput, Button, Alert} from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
 import { getDocs, collection, addDoc } from "firebase/firestore";
+import { auth } from '../../firebaseConfig';
 import { fireStoreDB } from '../../firebaseConfig';
+import WebViewImage from '../home/components/WebViewImage';
+import { Image } from "react-native-expo-image-cache";
 
 const DetailedCommunityPage = ({ route }) => {
-  const { title, subTitle, id } = route.params;
-
+  const { title, subTitle, id,webtoonTitle,imageURL,webtoonImage,autor,webtoonID,service } = route.params;
   // 댓글을 저장할 상태를 생성
   const [comments, setComments] = useState([]);
   const [commentInput, setCommentInput] = useState('');
 
-  const handleSelWebtoon = () => {
-    // navigation.navigate('SearchPage');
-  }
-
   // 댓글 작성 함수
   const handleAddComment = async () => {
     // 입력값이 없으면 리턴
-    if (!commentInput) return;
+    if (!commentInput) return; // 현재 로그인 정보 가져오는 코드
+
+    const user = auth.currentUser; // 로그인 안되어 있으면 null반환
+    if(!user){
+      Alert.alert("로그인을 해주세요.");// TODO: 로그인 페이지로 넘어가는 로직 추가필요
+      return;
+    }
+    const displayName = user.displayName; // 현재 로그인 되어 있는 유저 닉네임
+    const uid = user.uid; // 현재 로그인 되어 있는 유저 uid
 
     // Firebase에 댓글 저장
-    const commentsCollection = collection(fireStoreDB, `posts/${id}/comments`);
+    const commentsCollection = collection(fireStoreDB, `${service}Posts/${webtoonID}/posts/${id}/comments`);
     await addDoc(commentsCollection, { 
+      displayName: displayName,
       comment: commentInput,
+      uid: uid,
+      date: new Date().toLocaleString(),
     });
 
     setCommentInput(''); // 입력창 초기화
     console.log('댓글 작성 시간:', new Date().toLocaleString()); // 댓글 작성 시간 출력
+    fetchComments();
   }
 
 
   // 댓글을 불러오는 함수
   const fetchComments = async () => {
-    const commentsCollection = collection(fireStoreDB, `posts/${id}/comments`);
+    const commentsCollection = collection(fireStoreDB, `${service}Posts/${webtoonID}/posts/${id}/comments`);
     const commentSnap = await getDocs(commentsCollection);
     const comments = commentSnap.docs.map(doc => doc.data().comment);
     setComments(comments);
@@ -44,6 +53,29 @@ const DetailedCommunityPage = ({ route }) => {
     fetchComments(); // 컴포넌트가 마운트될 때 댓글을 불러옵니다
   }, []);
 
+  const renderWebtoonImage = () => {
+    if (service === 'kakaoPage') {
+      return (
+        <Image
+          {...{ uri: `https:${webtoonImage}` }}
+          style={styles.image}
+          onError={(e) => console.log(e)}
+        />
+      );
+    } else if (service === 'kakao') {
+      return (
+        <Image
+          {...{ uri: webtoonImage }}
+          style={styles.image}
+          onError={(e) => console.log(e)}
+        />
+      );
+    } else if (service === 'naver') {
+      return <WebViewImage imageURL={webtoonImage} isDetail={true} />;
+    } else {
+      return null;
+    }
+  }
   return (
     <View style={styles.main}>
       <ScrollView style={styles.communityContainer}>
@@ -53,14 +85,20 @@ const DetailedCommunityPage = ({ route }) => {
         <View style={styles.subTitle}>
           <Text>{subTitle}</Text>
         </View>
+        <View style={styles.imageContainerCenter}>
+                <Image {...{ uri: imageURL }}style={styles.image} />
+            </View>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <TouchableOpacity onPress={handleSelWebtoon}>
+          <TouchableOpacity>
             <MaterialCommunityIcons name="pound" size={24} color="white" />
           </TouchableOpacity>
-          <Text style={{ marginLeft: 5, color: 'white' }}>영화 이름</Text>
+          <Text style={{ marginLeft: 5, color: 'white' }}>{webtoonTitle}</Text>
+        </View>
+        <View style ={styles.imageContainerLeft}>
+        {renderWebtoonImage()}
+          <Text style={styles.autorText}>{autor}</Text>
         </View>
         <View style={styles.chating}>
-          {/* 댓글 렌더링 */}
           {comments.map((comment, index) => (
             <Text style={styles.commentItem} key={index}>{comment}</Text>
           ))}
@@ -82,14 +120,14 @@ const DetailedCommunityPage = ({ route }) => {
 const styles = StyleSheet.create({
   main: {
     flex: 1,
-    backgroundColor: 'white',
+    backgroundColor: '#435585',
     padding: 20,
     justifyContent: 'space-between', 
   },
   communityContainer: {
     flex: 1,
     padding: 10,
-    backgroundColor: '#858585',
+    backgroundColor: '#435585',
     borderRadius: 10,
     marginBottom: 10,
   },
@@ -98,7 +136,7 @@ const styles = StyleSheet.create({
     color: 'white',
   },
   subTitle: {
-    backgroundColor: '#CACACA',
+    backgroundColor: '#818FB4',
     marginVertical: 10,
     borderRadius: 10,
     padding: 10,
@@ -127,7 +165,26 @@ const styles = StyleSheet.create({
     padding: 10,
     marginVertical: 5,
     borderRadius: 5,
-  }
+  },
+  imageContainerCenter: {
+    alignItems: 'center', // 이미지를 중앙에 배치
+    marginVertical: 10, // 상하 마진 추가
+  },
+  imageContainerLeft: {
+    marginVertical: 10, // 상하 마진 추가
+    alignSelf: 'flex-start', // 이미지 컨테이너를 왼쪽으로 정렬
+  },
+  image: {
+    width: 150, // 이미지의 너비 조정 (예: 200)
+    height: 150, // 이미지의 높이 설정 (예: 200)
+    resizeMode: 'contain', // 이미지 비율 유지
+    borderRadius : 10,
+  },
+  autorText: {
+    marginLeft: 10, // 이미지와의 간격
+    fontSize: 16, // 텍스트 크기
+    color: 'black', // 텍스트 색상
+  },
 });
 
 export default DetailedCommunityPage;

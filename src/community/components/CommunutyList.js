@@ -25,25 +25,25 @@ const CommunityList = ({ date, title, subTitle, id, webtoonTitle, imageURL, webt
 
     const timeAgo = formatDistanceToNow(dateObject, { addSuffix: true, locale: ko }); //날짜 편차 구하기
 
-    const handleDelete = async () => {
-        Alert.alert(
-            "게시물 삭제",
-            "이 게시물을 정말 삭제하시겠습니까?",
-            [
-                {
-                    text: "취소",
-                    style: "cancel"
-                },
-                {
-                    text: "삭제",
-                    onPress: async () => {
-                        await deleteDoc(doc(fireStoreDB, "posts", id));
-                        // 여기에 게시물이 삭제된 후의 로직 추가 (예: 상태 업데이트, 목록 새로고침 등)
-                    }
-                }
-            ]
-        );
-    };
+    // const handleDelete = async () => {
+    //     Alert.alert(
+    //         "게시물 삭제",
+    //         "이 게시물을 정말 삭제하시겠습니까?",
+    //         [
+    //             {
+    //                 text: "취소",
+    //                 style: "cancel"
+    //             },
+    //             {
+    //                 text: "삭제",
+    //                 onPress: async () => {
+    //                     await deleteDoc(doc(fireStoreDB, "posts", id));
+    //                     // 여기에 게시물이 삭제된 후의 로직 추가 (예: 상태 업데이트, 목록 새로고침 등)
+    //                 }
+    //             }
+    //         ]
+    //     );
+    // };
 
     const handleIcon = async () => {
         // const postRef = doc(fireStoreDB,"posts", );

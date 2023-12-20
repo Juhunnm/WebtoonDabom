@@ -36,22 +36,16 @@ const AddCommunity = ({ navigation: { navigate }, route }) => {
         }
     }, [])
 
-
-    //image  address
     const [selectImageUrl, setImageUrl] = useState(null);
-    //권한 요청
-    const [status, requestPermission] = ImagePicker.useMediaLibraryPermissions();
-
-    const uploadImage = async () => {
-        // 권한 확인 코드: 권한 없으면 물어보고, 승인하지 않으면 함수 종료
+    const [status, requestPermission] = ImagePicker.useMediaLibraryPermissions();//권한 요청
+    const uploadImage = async () => {// 권한 확인 코드: 권한 없으면 물어보고, 승인하지 않으면 함수 종료
         if (!status?.granted) {
             const permission = await requestPermission();
             if (!permission.granted) {
                 return null;
             }
         }
-        // 이미지 업로드 기능
-        const result = await ImagePicker.launchImageLibraryAsync({
+        const result = await ImagePicker.launchImageLibraryAsync({ // 이미지 업로드 기능
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsEditing: false,
             quality: 1,
@@ -60,31 +54,21 @@ const AddCommunity = ({ navigation: { navigate }, route }) => {
         if (result.canceled) {
             return null; // 이미지 업로드 취소한 경우
         }
-        // 이미지 업로드 결과 및 이미지 경로 업데이트
-        setImageUrl(result.assets[0].uri);
+        setImageUrl(result.assets[0].uri); // 이미지 업로드 결과 및 이미지 경로 업데이트
     };
-
-
     const uploadImageToFirebase = async (imageUri) => {
         console.log(imageUri);
         const fileName = `profile_image_${new Date().getTime()}.jpg`;
-        console.log('a')
         const storageRef = ref(storage, `profileImages/${fileName}`);
-        console.log('b')
-
         try {
-            // 이미지를 Blob 형태로 변환
-            console.log('c')
-            if (imageUri) {
+            if (imageUri) {// 이미지를 Blob 형태로 변환
                 console.log("변환시작")
                 const response = await fetch(imageUri);
                 const blob = await response.blob();
                 console.log("변환완료")
-                // Blob을 Firebase Storage에 업로드
-                await uploadBytesResumable(storageRef, blob);
+                await uploadBytesResumable(storageRef, blob);// Blob을 Firebase Storage에 업로드
                 console.log("업로드시작")
-                // 업로드된 이미지의 URL 가져오기
-                const url = await getDownloadURL(storageRef);
+                const url = await getDownloadURL(storageRef);// 업로드된 이미지의 URL 가져오기
                 console.log("업로드 완료")
                 return url;
             } else {

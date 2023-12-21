@@ -45,13 +45,15 @@ const WebtoonList = ({ updateDay, isNaverChecked, isKakaoChecked, isPageChecked 
 
     useEffect(() => {
         const focusUnsubscribe = navigation.addListener('focus', () => {
-            getWebtoonsByCondition(updateDay);
+            if (!loading) {
+                getWebtoonsByCondition(updateDay);
+            }
         });
-
         const blurUnsubscribe = navigation.addListener('blur', () => {
-            setWebtoons([]);
+            if (!loading) {
+                setWebtoons([]);
+            }
         });
-
 
         if (!loading) {
             getWebtoonsByCondition(updateDay);

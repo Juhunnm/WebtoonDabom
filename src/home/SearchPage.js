@@ -54,13 +54,13 @@ const SearchPage = ({ navigation: { navigate }, route }) => {
             const lowerCaseQuery = searchQuery.toLowerCase();
             const filteredData = webtoons.filter(webtoon =>
                 webtoon.title.toLowerCase().includes(lowerCaseQuery) ||
-                (webtoon.author && webtoon.author.toLowerCase().includes(lowerCaseQuery))
+                webtoon.author.toLowerCase().includes(lowerCaseQuery)
             );
             setFilteredWebtoons(filteredData);
         } else {
             setFilteredWebtoons([]);
         }
-    }, [searchQuery, webtoons]);
+    }, [searchQuery]);
 
     const renderItem = useCallback(({ item }) =>
         <WebtoonListItem

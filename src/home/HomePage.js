@@ -45,7 +45,7 @@ const HomePage = () => {
 
             if (storedData !== null) {
                 console.log("AsyncStorage에서 데이터를 불러왔습니다.");
-                return JSON.parse(storedData);
+                return;
             }
 
             const response = await fetch(apiUrl);

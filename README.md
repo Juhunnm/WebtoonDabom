@@ -28,7 +28,8 @@
 
 ## 플로우 차트
 ### 웹툰 리스트
-![webtoonList_real](https://github.com/kang-min-seok/Webtoon_daBom/assets/50363541/bee92e3b-8a9c-4ff5-bf82-0c69087bc2bd)
+![webtoonList drawio](https://github.com/kang-min-seok/Webtoon_daBom/assets/50363541/2a88f5e1-07bd-4b66-90f2-1462d54de30f)
+
 ### 웹툰 즐겨찾기
 ![webtoonBookMark](https://github.com/kang-min-seok/Webtoon_daBom/assets/50363541/87d13323-50a6-4ba1-b83c-3f76d99d159b)
 

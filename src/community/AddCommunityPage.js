@@ -45,11 +45,11 @@ const AddCommunity = ({ navigation: { navigate }, route }) => {
                 return null;
             }
         }
-        const result = await ImagePicker.launchImageLibraryAsync({ // 이미지 업로드 기능
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
-            allowsEditing: false,
-            quality: 1,
-            aspect: [1, 1]
+        const result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images, // 이미지만 선택가능
+            allowsEditing: true, // 영역 선택 가능
+            quality: 1, // 이미지 품질
+            aspect: [1, 1] // 이미지 비율
         });
         if (result.canceled) {
             return null; // 이미지 업로드 취소한 경우
